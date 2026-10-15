@@ -4,6 +4,10 @@ The fixtures are committed and regenerable: ``uv run python
 scripts/make_fixtures.py``. They cover the shapes the real corpus shows —
 truncated metadata, empty metadata, a large-font title with a hyphenated line
 break, two columns, and pages without a text layer.
+
+The pure parsing helpers are exercised here as well, because they encode rules
+the fixtures cannot show on their own (old-style arXiv identifiers, the
+Springer file-name DOI form, accent repair).
 """
 
 from __future__ import annotations
@@ -19,6 +23,17 @@ import pytest
 from apr.errors import InputError
 from apr.extract import extract_local
 from apr.extract.document import TextLine, TextSpan
+from apr.extract.normalize import (
+    arxiv_year,
+    clean_author,
+    doi_from_filename,
+    find_arxiv,
+    join_wrapped,
+    looks_like_name,
+    normalise_doi,
+    repair_spacing_accents,
+    split_author_list,
+)
 from apr.extract.page import _line_text
 from apr.model import PaperRecord
 
@@ -94,6 +109,8 @@ def test_clean_metadata_fixture() -> None:
     assert record.venue == "Journal of Clean Tests"
     assert record.abstract is not None
     assert record.abstract.startswith("This fixture carries a complete /Info")
+    assert record.abstract.endswith("extraction can cross-check the two sources.")
+    assert "Body text follows the abstract heading." not in record.abstract
     assert record.status == "identified"
     assert record.warnings == []
     assert record.provenance["doi"].source == "pdf-info"
@@ -194,6 +211,62 @@ def test_line_text_leaves_mixed_case_alone() -> None:
         ),
     )
     assert _line_text(line) == "Fewer Tokens, Better Action: and More"
+
+
+# -- the parsing rules, which are pure functions -----------------------------
+
+
+def test_arxiv_identifiers_in_both_forms() -> None:
+    assert find_arxiv("arXiv:2306.12983v2  [cs.CV]  16 Nov 2023") == (
+        "2306.12983",
+        "v2",
+    )
+    assert find_arxiv("https://arxiv.org/abs/2505.21469v4") == ("2505.21469", "v4")
+    assert find_arxiv("hep-th/9901001") == ("hep-th/9901001", None)
+    assert find_arxiv("math.GT/0309136v1") == ("math.GT/0309136", "v1")
+    assert find_arxiv("no identifier here") is None
+
+
+def test_arxiv_identifier_carries_the_submission_year() -> None:
+    assert arxiv_year("2610.01939") == 2026
+    assert arxiv_year("2306.12983") == 2023
+    assert arxiv_year("9901.0001") == 1999
+    assert arxiv_year("hep-th/9901001") is None
+
+
+def test_dois_are_lowercased_without_the_prefix() -> None:
+    assert normalise_doi("doi:10.1038/S41467-024-53632-4") == (
+        "10.1038/s41467-024-53632-4"
+    )
+    assert normalise_doi("see https://doi.org/10.48550/arXiv.2505.21469.") == (
+        "10.48550/arxiv.2505.21469"
+    )
+    assert normalise_doi("no identifier here") is None
+
+
+def test_springer_file_names_are_dois() -> None:
+    assert doi_from_filename("s41467-024-53632-4.pdf") == ("10.1038/s41467-024-53632-4")
+    assert doi_from_filename("2610.01939v2.pdf") is None
+
+
+def test_names_keep_their_letters_and_lose_their_markers() -> None:
+    assert repair_spacing_accents("Jan Dubi\u00b4nski") == "Jan Dubi\u0144ski"
+    assert clean_author("Jingyang Zhang1,\u2217") == "Jingyang Zhang"
+    assert split_author_list("Ada Lovelace; Alan Turing") == [
+        "Ada Lovelace",
+        "Alan Turing",
+    ]
+    assert not looks_like_name("University of Washington")
+
+
+def test_title_lines_join_across_a_hyphen() -> None:
+    assert join_wrapped(["FROM LARGE LANGUAGE MOD-", "ELS"]) == (
+        "FROM LARGE LANGUAGE MODELS"
+    )
+    assert join_wrapped(["BASELINE FOR DETECTING PRE-T-", "RAINING DATA"]) == (
+        "BASELINE FOR DETECTING PRE-TRAINING DATA"
+    )
+    assert join_wrapped(["Attention Is All", "You Need"]) == "Attention Is All You Need"
 
 
 # -- the fixtures and their generator ----------------------------------------

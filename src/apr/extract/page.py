@@ -480,8 +480,13 @@ def _offer_abstract(layer: LayerResult, text_lines: Sequence[str]) -> None:
 
 
 def _is_section_heading(line: str) -> bool:
+    """True for the heading that ends the abstract block.
+
+    Headings are compared without their number or spacing: ``1 I NTRODUCTION``
+    extracts with a space in the middle of the word.
+    """
     folded = re.sub(r"[^A-Za-z]", "", line).upper()
-    folded = re.sub(r"^[0-9IVX]+", "", folded)
+    folded = re.sub(r"^\d+", "", folded)
     return folded in {"INTRODUCTION", "KEYWORDS", "INDEXTERMS", "RELATEDWORK"}
 
 
