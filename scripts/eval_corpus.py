@@ -19,6 +19,7 @@ equality, with a similarity ratio reported alongside.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import re
@@ -73,12 +74,47 @@ def first_surname(names: list[str] | None) -> str:
     return surname(names[0]) if names else ""
 
 
+def package_has_main() -> bool:
+    """Does the apr package that will actually be imported support ``-m``?
+
+    Resolving this at runtime matters: a pre-merge measurement can point
+    PYTHONPATH at a lane worktree whose copy of the package predates
+    ``__main__.py``, in which case ``python -m apr`` cannot work.
+    """
+    spec = importlib.util.find_spec("apr")
+    if spec is None or not spec.origin:
+        return False
+    return (Path(spec.origin).parent / "__main__.py").exists()
+
+
+def apr_command(path: Path, online: bool) -> list[str]:
+    """The command under measurement: the package's own entry point.
+
+    ``python -m apr`` is the documented way to run this checkout uninstalled,
+    so that is what gets measured. When the package being measured lacks the
+    file that enables it, call the entry point directly instead, so that a
+    measurement still exercises the real CLI rather than silently measuring
+    nothing.
+    """
+    if package_has_main():
+        command = [sys.executable, "-m", "apr"]
+    else:
+        command = [
+            sys.executable,
+            "-c",
+            "from apr.cli import main; raise SystemExit(main())",
+        ]
+    command.append("--no-abstract")
+    if online:
+        command.append("--online")
+    command.append(str(path))
+    return command
+
+
 def run_apr(
     path: Path, *, online: bool, timeout: float
 ) -> tuple[dict | None, str, float]:
-    command = [sys.executable, "-m", "apr", "--no-abstract", str(path)]
-    if online:
-        command.insert(3, "--online")
+    command = apr_command(path, online)
     started = time.monotonic()
     try:
         proc = subprocess.run(

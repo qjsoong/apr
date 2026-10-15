@@ -7,6 +7,8 @@ extraction has its own tests.
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -190,6 +192,18 @@ def test_closed_pipe_exits_141(
 
     monkeypatch.setattr(cli.sys, "stdout", BrokenStdout())
     assert cli.main(["a.pdf"]) == cli.EXIT_BROKEN_PIPE
+
+
+def test_python_dash_m_runs_the_cli() -> None:
+    """`python -m apr` is the documented way to run an uninstalled checkout."""
+    proc = subprocess.run(
+        [sys.executable, "-m", "apr", "--version"],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0
+    assert proc.stdout.startswith("apr ")
 
 
 def test_stdin_is_spooled_and_cleaned_up(

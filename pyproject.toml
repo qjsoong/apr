@@ -66,7 +66,9 @@ known-first-party = ["apr"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+# -ra prints the reason for every skip, so a corpus-free CI run shows *why* the
+# corpus tests did not run instead of hiding them in a green summary.
+addopts = "-q -ra"
 markers = [
     "corpus: needs the local PDF corpus (set APR_CORPUS)",
     "network: performs live network requests (set APR_TEST_ALLOW_NETWORK=1)",
