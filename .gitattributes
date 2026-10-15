@@ -1,0 +1,11 @@
+# Text files are stored with LF and checked out with LF everywhere: this is a
+# Python project, and a contributor on Windows seeing CRLF churn in every diff
+# is worse than the editor inconvenience.
+* text=auto eol=lf
+
+# PDFs are binary formats even when their content happens to be plain ASCII,
+# which is exactly the case for the fixture PDFs built by
+# scripts/make_fixtures.py. Without this line, git classifies them as text and
+# converts their line endings on checkout, corrupting every xref offset: the
+# Windows CI jobs read back CRLF while the generator emits LF.
+*.pdf binary
