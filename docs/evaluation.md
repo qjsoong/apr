@@ -73,7 +73,9 @@ that allowance the honest figure is 11/12 plus one correct identification. And
 the year column for the two conference files agrees partly because apr's year
 hint and the answer key's year both come from the file name (the venues are not
 in question: those PDFs print `ICLR 2025` and `NIPS 2017` on page 1). Titles and
-first authors are not file-name-derived for any of the twelve.
+first authors do not have that weakness: renamed to neutral names, the corpus
+still scores 12/12 and 12/12, with no title attributed to the file-name layer
+(see the structural checks below).
 
 Two cases are worth naming because they are the ones a plausible implementation
 gets wrong:
@@ -102,6 +104,7 @@ These are not accuracy measurements; each one is a claim the README makes.
 | The documented install works | `uv run --isolated --no-project --with git+https://github.com/qjsoong/apr apr --version` in a throwaway environment, no credentials | `apr 0.1.0` |
 | Artifacts carry the licence | `unzip -l dist/apr-0.1.0-py3-none-any.whl` and the sdist | `LICENSE` in both; wheel contains only the package |
 | The point of the tool works | A shell loop renames three corpus PDFs from `jq`-extracted fields, offline | `Vaswani 2017 - Attention Is All You Need.pdf`, etc. |
+| Titles and first authors do not depend on the file name | Copied the corpus to neutral names (`01.pdf`…`12.pdf`) so the file-name layer had nothing to work with, and re-measured | 12/12 titles, 12/12 first authors, and no title's provenance was the file name |
 
 ## Defects the measurements found and fixed
 
