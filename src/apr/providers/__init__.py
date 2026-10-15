@@ -23,8 +23,10 @@ from typing import Any
 
 from apr.match import (
     CONFIDENT_MATCH,
+    CROSS_CHECK_THRESHOLD,
     MATCH_THRESHOLD,
     Candidate,
+    cross_check,
     normalise_doi,
     parse_arxiv_id,
     score_candidate,
@@ -65,6 +67,8 @@ def resolve(
 
     Never raises for a network or provider failure: every attempt, successful
     or not, is recorded in ``record.sources`` and the record is returned.
+    A record resolved by identifier is cross-checked against the PDF text; a
+    disagreement is reported as a warning, never used to veto the record.
     """
     options = HttpOptions(
         timeout=timeout, cache_dir=cache_dir, request_limit=MAX_REQUESTS
@@ -88,6 +92,9 @@ class _Resolution:
         self.mailto = mailto
         self.verbose = verbose
         self._queried_dois: set[str] = set()
+        #: What the PDF itself said, kept before any provider writes over it.
+        self._pdf_title: str | None = None
+        self._pdf_authors: list[str] = []
 
     # -- the plan ------------------------------------------------------------
 
@@ -96,6 +103,8 @@ class _Resolution:
         doi = normalise_doi(record.doi)
         arxiv = parse_arxiv_id(record.arxiv_id)
         title = " ".join(record.title.split()) if record.title else None
+        self._pdf_title = title
+        self._pdf_authors = list(record.authors)
 
         if doi is None and arxiv is None and not title:
             record.add_source(
@@ -158,6 +167,7 @@ class _Resolution:
             call,
             authoritative=authoritative,
             identifier=True,
+            label=f"DOI {doi}",
         )
 
     def _arxiv_by_id(self, arxiv_id: str) -> None:
@@ -167,6 +177,7 @@ class _Resolution:
             lambda: arxiv.by_id(arxiv_id, options=self.options),
             authoritative=True,
             identifier=True,
+            label=f"arXiv {arxiv_id}",
         )
         doi = candidate.doi if candidate else None
         if doi and doi not in self._queried_dois:
@@ -223,8 +234,14 @@ class _Resolution:
         *,
         authoritative: bool = False,
         identifier: bool = False,
+        label: str | None = None,
     ) -> Candidate | None:
-        """Run one lookup, record the attempt, offer what it found."""
+        """Run one lookup, record the attempt, offer what it found.
+
+        ``label`` names an identifier the record was looked up by; it turns on
+        the cross-check against the PDF text. Bibliographic candidates are not
+        cross-checked: their score already decides whether they count.
+        """
         if self.options.out_of_budget:
             self._log(f"{source}: skipped, request budget of {MAX_REQUESTS} spent")
             return None
@@ -242,6 +259,8 @@ class _Resolution:
 
         candidates = _as_candidates(found)
         accepted = self._offer(source, query, candidates, authoritative, identifier)
+        if label and accepted is not None:
+            self._report_disagreement(label, accepted)
         self.record.add_source(
             SourceAttempt(
                 source=source,
@@ -309,6 +328,24 @@ class _Resolution:
         return candidate
 
     # -- helpers -------------------------------------------------------------
+
+    def _report_disagreement(self, label: str, candidate: Candidate) -> None:
+        """Warn when a looked-up record does not look like the PDF's paper.
+
+        Both values are already in the evidence log - the PDF's title from
+        extraction, the looked-up title from the provider - so ``--why`` shows
+        what disagreed. Confidence still decides the winner: this only tells the
+        user that the identifier and the file may not belong together.
+        """
+        agreement = cross_check(
+            candidate, title=self._pdf_title, authors=self._pdf_authors
+        )
+        if agreement is None or agreement >= CROSS_CHECK_THRESHOLD:
+            return
+        self.record.warn(
+            f"looked-up record for {label} disagrees with the PDF text "
+            f"(similarity {agreement:.2f}); the PDF may carry a stale identifier"
+        )
 
     def _local_title(self) -> str | None:
         title = self.record.title

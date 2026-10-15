@@ -30,6 +30,9 @@ MATCH_THRESHOLD = 0.60
 #: Below this a match is still offered, but with a warning to check it.
 CONFIDENT_MATCH = 0.85
 
+#: Below this a looked-up record is reported as disagreeing with the PDF text.
+CROSS_CHECK_THRESHOLD = 0.5
+
 #: How many of the local authors are compared; papers list many, and the first
 #: few carry the signal.
 AUTHORS_COMPARED = 3
@@ -267,6 +270,31 @@ def score_candidate(
         components.append((YEAR_WEIGHT, year_score(year, candidate.year)))
     total = sum(weight for weight, _ in components)
     return sum(weight * value for weight, value in components) / total
+
+
+def cross_check(
+    candidate: Candidate, *, title: str | None, authors: Sequence[str] = ()
+) -> float | None:
+    """How well an identifier-resolved record agrees with the PDF text.
+
+    A DOI or arXiv id found in a file can be stale, mistyped, or another
+    paper's; the record it resolves to should still look like the paper the
+    file claims to be. Returns None when there is nothing to compare, because
+    the PDF gave no title. Otherwise it is the title similarity, capped by the
+    author agreement when both sides list authors, so a matching title with a
+    different author list is reported too.
+
+    The value reports, it does not decide: an identifier-resolved record is
+    still authoritative for that identifier.
+    """
+    if not (title and title.strip()) or not (
+        candidate.title and candidate.title.strip()
+    ):
+        return None
+    agreement = title_score(title, candidate.title)
+    if authors and candidate.authors:
+        agreement = min(agreement, author_score(authors, candidate.authors))
+    return agreement
 
 
 def abstract_from_inverted_index(index: Any) -> str | None:

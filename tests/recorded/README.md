@@ -17,6 +17,7 @@ edited, reordered or prettified by hand.
 | `arxiv_search_attention.xml` | `export.arxiv.org/api/query?search_query=ti:"Attention is all you need" AND au:"Vaswani"&max_results=5` | the single entry |
 | `crossref_doi_10.1038_s41467-024-53632-4.json` | `api.crossref.org/works/10.1038/s41467-024-53632-4` | identifiers, title, journal, authors, dates and the first JATS abstract paragraph |
 | `crossref_doi_10.1103_physrevd.104.095029.json` | `api.crossref.org/works/10.1103/PhysRevD.104.095029` | identifiers, title, journal, authors, dates |
+| `crossref_doi_10.1038_s41467-025-60763-9.json` | `api.crossref.org/works/10.1038/s41467-025-60763-9` | identifiers, title, journal, authors, dates; used to model a PDF that carries another paper's DOI |
 | `crossref_search_membership_inference.json` | `api.crossref.org/works?query.bibliographic=Towards More Realistic Membership Inference Attacks on Large Diffusion Models&query.author=Dubiński&rows=5` | the five items, without reference lists; item 1 is the paper, items 2–5 are near misses |
 | `openalex_doi_10.1038_s41467-024-53632-4.json` | `api.openalex.org/works/doi:10.1038/s41467-024-53632-4` | identifiers, title, year, type, primary location, first three authorships, the first 14 positions of the inverted abstract |
 | `openalex_search_attention.json` | `api.openalex.org/works?search=Attention is all you need&per-page=5` | the five results, without concepts, topics and counts |

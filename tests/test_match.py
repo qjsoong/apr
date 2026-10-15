@@ -9,12 +9,14 @@ import pytest
 
 from apr.match import (
     AUTHOR_WEIGHT,
+    CROSS_CHECK_THRESHOLD,
     TITLE_WEIGHT,
     YEAR_WEIGHT,
     Candidate,
     abstract_from_inverted_index,
     author_score,
     canonical_url,
+    cross_check,
     normalise_doi,
     normalise_title,
     parse_arxiv_id,
@@ -240,6 +242,69 @@ def test_strip_markup_on_a_real_crossref_abstract() -> None:
     assert abstract.startswith("Generative drug design facilitates the creation")
     assert "<" not in abstract
     assert "&" not in abstract
+
+
+def test_cross_check_says_nothing_when_the_pdf_gave_no_title() -> None:
+    """Nothing to compare is not a disagreement."""
+    candidate = Candidate(title="Attention Is All You Need", authors=["Ashish Vaswani"])
+    assert cross_check(candidate, title=None) is None
+    assert cross_check(candidate, title="   ") is None
+    assert cross_check(Candidate(title=None), title="Attention Is All You Need") is None
+
+
+def test_cross_check_agrees_when_the_record_is_the_pdf_s_paper() -> None:
+    candidate = Candidate(
+        title="Attention Is All You Need",
+        authors=["Ashish Vaswani", "Noam Shazeer"],
+    )
+
+    agreement = cross_check(
+        candidate,
+        title="Attention is all you need",
+        authors=["A. Vaswani", "N. Shazeer"],
+    )
+
+    assert agreement is not None
+    assert agreement == 1.0
+    assert agreement >= CROSS_CHECK_THRESHOLD
+
+
+def test_cross_check_flags_a_record_that_is_another_paper() -> None:
+    """A PDF that prints the TamGen title behind another paper's DOI."""
+    work = json.loads(recorded("crossref_doi_10.1038_s41467-025-60763-9.json"))[
+        "message"
+    ]
+    candidate = Candidate(
+        title=work["title"][0],
+        authors=[
+            f"{author.get('given', '')} {author.get('family', '')}".strip()
+            for author in work["author"]
+        ],
+    )
+    local = (
+        "TamGen: drug design with target-aware molecule generation through a "
+        "chemical language model"
+    )
+
+    agreement = cross_check(candidate, title=local)
+
+    assert agreement is not None
+    assert agreement == title_score(local, candidate.title)
+    assert agreement < CROSS_CHECK_THRESHOLD
+
+
+def test_cross_check_is_capped_by_the_author_list() -> None:
+    """The right title with a different first author is still a disagreement."""
+    candidate = Candidate(
+        title="Attention Is All You Need", authors=["Someone Else", "A. Nobody"]
+    )
+
+    assert (
+        cross_check(
+            candidate, title="Attention is all you need", authors=["Ashish Vaswani"]
+        )
+        == 0.0
+    )
 
 
 def test_abstract_from_inverted_index_rebuilds_word_order() -> None:

@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from apr.match import CROSS_CHECK_THRESHOLD, title_score
 from apr.model import (
     SOURCE_ERROR,
     SOURCE_NOT_FOUND,
@@ -28,6 +29,11 @@ RECORDED = Path(__file__).parent / "recorded"
 
 MEMBERSHIP_TITLE = (
     "Towards More Realistic Membership Inference Attacks on Large Diffusion Models"
+)
+
+TAMGEN_TITLE = (
+    "TamGen: drug design with target-aware molecule generation through a "
+    "chemical language model"
 )
 
 
@@ -137,6 +143,7 @@ def test_a_doi_is_resolved_by_crossref_and_nothing_else_is_asked(
     assert sources(record) == [("crossref", SOURCE_OK)]
     assert record.sources[0].query == "doi:10.1038/s41467-024-53632-4"
     assert record.sources[0].candidates == 1
+    assert record.warnings == []  # the PDF gave no title, so nothing to cross-check
     assert online.urls == ["https://api.crossref.org/works/10.1038/s41467-024-53632-4"]
     assert online.requests[0].get_header("User-agent") == http.USER_AGENT
 
@@ -217,10 +224,95 @@ def test_arxiv_by_id_fills_what_the_pdf_does_not_have(online: Online) -> None:
     assert record.arxiv_version == "v2"
     assert record.url == "https://arxiv.org/abs/2306.12983v2"
     assert record.provenance["title"].confidence == 1.0
+    assert record.warnings == []  # the PDF gave no title, so nothing to cross-check
     assert sources(record) == [("arxiv", SOURCE_OK)]
     assert online.urls == [
         "https://export.arxiv.org/api/query?id_list=2306.12983&max_results=1"
     ]
+
+
+def test_an_identifier_lookup_that_agrees_with_the_pdf_stays_quiet(
+    online: Online,
+) -> None:
+    online.file(
+        "api.crossref.org/works/10.1038/s41467",
+        "crossref_doi_10.1038_s41467-024-53632-4.json",
+    )
+    record = local_record(
+        title=(TAMGEN_TITLE, 0.7),
+        authors=(["Kehan Wu"], 0.6),
+        doi=("10.1038/s41467-024-53632-4", 0.6),
+    )
+
+    resolve(record)
+
+    assert record.title == TAMGEN_TITLE
+    assert record.authors[0] == "Kehan Wu"
+    assert record.provenance["title"].source == "crossref"
+    assert record.warnings == []
+    assert sources(record) == [("crossref", SOURCE_OK)]
+
+
+def test_a_doi_that_disagrees_with_the_pdf_title_is_reported(
+    online: Online,
+) -> None:
+    """A stale DOI: the PDF says TamGen, the DOI belongs to another paper."""
+    online.file(
+        "api.crossref.org/works/", "crossref_doi_10.1038_s41467-025-60763-9.json"
+    )
+    resolved = json.loads(recorded("crossref_doi_10.1038_s41467-025-60763-9.json"))[
+        "message"
+    ]["title"][0]
+    record = local_record(
+        title=(TAMGEN_TITLE, 0.8), doi=("10.1038/s41467-025-60763-9", 0.6)
+    )
+
+    resolve(record)
+
+    # The identifier is still authoritative for that identifier: it wins.
+    assert record.title == resolved
+    assert record.doi == "10.1038/s41467-025-60763-9"
+    assert record.provenance["title"].source == "crossref"
+    # And the disagreement is reported, with the number behind it.
+    agreement = title_score(TAMGEN_TITLE, resolved)
+    assert agreement < CROSS_CHECK_THRESHOLD
+    assert record.warnings == [
+        f"looked-up record for DOI 10.1038/s41467-025-60763-9 disagrees with the "
+        f"PDF text (similarity {agreement:.2f}); the PDF may carry a stale "
+        "identifier"
+    ]
+    # Both values stay in the evidence log, each with its source.
+    titles = {
+        (item.source, item.value) for item in record.evidence if item.field == "title"
+    }
+    assert ("pdf-first-page", TAMGEN_TITLE) in titles
+    assert ("crossref", resolved) in titles
+    assert sources(record) == [("crossref", SOURCE_OK)]
+
+
+def test_an_arxiv_id_that_disagrees_with_the_pdf_title_is_reported(
+    online: Online,
+) -> None:
+    online.file(
+        "export.arxiv.org/api/query?id_list=2306.12983", "arxiv_id_2306.12983.xml"
+    )
+    record = local_record(
+        arxiv_id=("2306.12983", 0.6),
+        title=("A survey of protein folding with transformers", 0.7),
+    )
+
+    resolve(record)
+
+    assert record.title == MEMBERSHIP_TITLE  # the id still wins
+    agreement = title_score(
+        "A survey of protein folding with transformers", MEMBERSHIP_TITLE
+    )
+    assert agreement < CROSS_CHECK_THRESHOLD
+    assert record.warnings == [
+        f"looked-up record for arXiv 2306.12983 disagrees with the PDF text "
+        f"(similarity {agreement:.2f}); the PDF may carry a stale identifier"
+    ]
+    assert sources(record) == [("arxiv", SOURCE_OK)]
 
 
 def test_arxiv_by_id_follows_its_published_doi_to_crossref(online: Online) -> None:
@@ -318,6 +410,8 @@ def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
     assert len(record.warnings) == 1
     assert "crossref" in record.warnings[0]
     assert "0.76" in record.warnings[0]
+    # The cross-check watches identifiers only; a search hit is judged by score.
+    assert "stale identifier" not in record.warnings[0]
     assert sources(record) == [
         ("crossref", SOURCE_OK),
         ("arxiv", SOURCE_NOT_FOUND),
