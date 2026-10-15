@@ -53,17 +53,36 @@ file carries no such identifier, so there is nothing to compare.
 | …of which matched a documented alternate wording | 1 | 1 | — |
 | First author (surname) equal | **12/12** | **12/12** | 9/12 / 11/12 |
 | Year equal | 12/12 | 12/12 | not a bar |
-| DOI equal, where the file has one | 4/5 | 5/5 + WACV | not a bar |
-| arXiv ID equal, where applicable | 4/4 | 4/4 | not a bar |
+| DOI equal, where the key has one | 5/6 (WACV missing) | 6/6 | not a bar |
+| arXiv ID equal, where the key has one | 4/4 | 4/4 | not a bar |
 | Mean title similarity | 0.99 | 0.99 | — |
 | `status` | 12 `identified` | 12 `identified` | — |
 | `confidence` range | 0.71–0.80 | 0.94–1.00 | — |
-| Time per file | 0.10–0.15 s | 0.10–2.75 s | — |
+| Time per file | 0.13–0.18 s | 0.7–5.3 s | — |
 | Network attempts recorded in `sources` | 0 | 19 | — |
 
 The one imperfect offline cell is the WACV paper's DOI: the PDF carries no DOI,
 so offline `apr` cannot know the published version's `10.1109/wacv57701.2024.00479`.
-Online it finds it by title. Nothing else on any file was wrong in either mode.
+Online it finds it by title.
+
+Four differences between the two columns need explaining rather than scoring,
+because the key and `apr` mean different things by an identifier:
+
+- The key's `doi` and `arxiv_id` name the version that is **in the file**. `apr`
+  names the **paper's** identifiers and lets `provenance` say how it knows. So
+  online, `apr` adds the arXiv identifier to the two proceedings files
+  (`2404.02936` for the ICLR file, `1706.03762` for the NeurIPS one) where the
+  key records `null`; both are right about different questions.
+- Two of the four arXiv PDFs embed arXiv's own DataCite DOI in `/Info`
+  (`10.48550/arxiv.2505.21469`, `…2610.01939`) and two do not. `apr` reports what
+  the file carries instead of inferring the DataCite DOI for the others, because
+  a derived identifier is a claim the file did not make — and pre-2022 arXiv
+  papers have no such DOI at all.
+- `venue` is not scored. `apr` prefers the venue the page prints: for
+  `2310.16789v3.pdf` that is `ICLR 2024` (the camera-ready header), where the key
+  takes `arXiv` from the record it chose.
+- Timings are from the machine that measured them; the online range is dominated
+  by network latency at the moment of measurement, not by the work.
 
 Two of these cells are weaker evidence than the rest, and the reader should know
 which. The title column includes one file whose title matches a *different
@@ -89,6 +108,18 @@ gets wrong:
   document's own 2017, returns no DOI, and records five warnings including
   `local year 2017 disagrees with the 2025 record from crossref; keeping the
   local year`.
+
+## Independent reproduction
+
+The numbers above were re-measured against the **released wheel** by a separate
+agent, using its own comparison code (no repository script, no import of `apr`)
+and its own normalisation, and after checking that the wheel's sources are
+byte-identical to the tagged revision. It confirmed 12/12 titles and 12/12 first
+authors in both modes, the same 11/12-without-the-alternate caveat, the offline
+WACV DOI gap, `status` and `confidence` ranges, the no-network claim two ways
+(an empty network namespace, and an audit hook with a positive control), and the
+rename loop at the top of the README. Its measurements also produced the four
+clarifications above and the corrected DOI cell.
 
 ## Structural checks
 
