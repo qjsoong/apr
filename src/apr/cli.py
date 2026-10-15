@@ -172,7 +172,11 @@ def _identify_stdin(args: argparse.Namespace) -> PaperRecord:
     try:
         with handle:
             handle.write(data)
-        return _identify_one(handle.name, args)
+        record = _identify_one(handle.name, args)
+        # The schema promises the input path as given: '-' for stdin, not the
+        # temporary file apr happens to spool it into.
+        record.path = "-"
+        return record
     finally:
         Path(handle.name).unlink(missing_ok=True)
 

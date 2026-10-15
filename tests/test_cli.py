@@ -223,6 +223,7 @@ def test_stdin_is_spooled_and_cleaned_up(
         type("S", (), {"buffer": __import__("io").BytesIO(b"%PDF-1.4 fake")})(),
     )
     assert cli.main(["-"]) == 0
-    capsys.readouterr()
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["path"] == "-", "stdin is reported as '-', not as a temp path"
     assert seen and seen[0].endswith(".pdf")
     assert not Path(seen[0]).exists()
