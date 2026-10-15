@@ -17,7 +17,7 @@ the run stops as soon as the record is complete enough to trust.
 from __future__ import annotations
 
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -25,11 +25,15 @@ from apr.match import (
     CONFIDENT_MATCH,
     CROSS_CHECK_THRESHOLD,
     MATCH_THRESHOLD,
+    YEAR_DISTANCE,
     Candidate,
+    best_candidate,
     cross_check,
+    normalise_arxiv_version,
     normalise_doi,
     parse_arxiv_id,
     score_candidate,
+    surname,
 )
 from apr.model import (
     SOURCE_ERROR,
@@ -49,7 +53,18 @@ MAX_REQUESTS = 6
 #: Title confidence at which a complete record is good enough to stop asking.
 HIGH_CONFIDENCE = 0.90
 
+#: A posting may fill a gap, but it never outranks what the PDF itself showed:
+#: the conference header or journal line printed on the paper is better evidence
+#: of the venue and year than the preprint server the authors also used.
+PREPRINT_CONFIDENCE = 0.4
+
+#: Least confidence a local year needs before it is worth defending.
+LOCAL_YEAR_FLOOR = 0.4
+
 NOTHING_TO_LOOK_UP = "nothing to look up"
+
+#: Words of a title used for the last Crossref retry.
+TITLE_WORDS = 6
 
 #: What a provider lookup returns: one candidate, several, or nothing at all.
 Lookup = Callable[[], "Candidate | list[Candidate] | None"]
@@ -95,6 +110,10 @@ class _Resolution:
         #: What the PDF itself said, kept before any provider writes over it.
         self._pdf_title: str | None = None
         self._pdf_authors: list[str] = []
+        self._pdf_year: int | None = None
+        self._pdf_year_confidence = 0.0
+        self._pdf_venue: str | None = None
+        self._pdf_arxiv_version: str | None = None
 
     # -- the plan ------------------------------------------------------------
 
@@ -105,6 +124,13 @@ class _Resolution:
         title = " ".join(record.title.split()) if record.title else None
         self._pdf_title = title
         self._pdf_authors = list(record.authors)
+        self._pdf_year = record.year
+        self._pdf_venue = record.venue
+        self._pdf_arxiv_version = (
+            arxiv[1] if arxiv else None
+        ) or normalise_arxiv_version(record.arxiv_version)
+        local_year = record.provenance.get("year")
+        self._pdf_year_confidence = local_year.confidence if local_year else 0.0
 
         if doi is None and arxiv is None and not title:
             record.add_source(
@@ -174,7 +200,11 @@ class _Resolution:
         candidate = self._lookup(
             "arxiv",
             f"id_list={arxiv_id}",
-            lambda: arxiv.by_id(arxiv_id, options=self.options),
+            lambda: arxiv.by_id(
+                arxiv_id,
+                reported_version=self._pdf_arxiv_version,
+                options=self.options,
+            ),
             authoritative=True,
             identifier=True,
             label=f"arXiv {arxiv_id}",
@@ -191,20 +221,38 @@ class _Resolution:
             )
 
     def _search(self, title: str) -> None:
-        """Bibliographic search: every hit has to earn its place by score."""
+        """Bibliographic search: every hit has to earn its place by score.
+
+        Crossref is asked with the plain title first; only when that yields
+        nothing acceptable is it asked again, narrowed by the first author and
+        then by the first few words, so a publisher's long title with a subtitle
+        does not lose the record it belongs to. The exact request URL of each
+        attempt is recorded, and every attempt is one of the six requests a
+        record may cost.
+        """
         authors = self.record.authors
-        steps: tuple[tuple[str, str, Lookup], ...] = (
-            (
+        for query in _crossref_queries(title, authors):
+            self._lookup(
                 "crossref",
-                f"query.bibliographic={title}",
-                lambda: crossref.search(
-                    title, authors, mailto=self.mailto, options=self.options
+                f"query.bibliographic={query}",
+                lambda query=query: crossref.search(
+                    query, mailto=self.mailto, options=self.options
                 ),
-            ),
+                url=crossref.bibliography_url(query, mailto=self.mailto),
+            )
+            if self._done():
+                return
+
+        steps: tuple[tuple[str, str, Lookup], ...] = (
             (
                 "arxiv",
                 f'ti:"{title}"',
-                lambda: arxiv.search(title, authors, options=self.options),
+                lambda: arxiv.search(
+                    title,
+                    authors,
+                    reported_version=self._pdf_arxiv_version,
+                    options=self.options,
+                ),
             ),
             (
                 "openalex",
@@ -235,12 +283,14 @@ class _Resolution:
         authoritative: bool = False,
         identifier: bool = False,
         label: str | None = None,
+        url: str | None = None,
     ) -> Candidate | None:
         """Run one lookup, record the attempt, offer what it found.
 
         ``label`` names an identifier the record was looked up by; it turns on
         the cross-check against the PDF text. Bibliographic candidates are not
-        cross-checked: their score already decides whether they count.
+        cross-checked: their score already decides whether they count. ``url``
+        is the request the caller made, for the source log.
         """
         if self.options.out_of_budget:
             self._log(f"{source}: skipped, request budget of {MAX_REQUESTS} spent")
@@ -251,7 +301,11 @@ class _Resolution:
             error = f"{type(exc).__name__}: {exc}"
             self.record.add_source(
                 SourceAttempt(
-                    source=source, status=SOURCE_ERROR, query=query, error=error
+                    source=source,
+                    status=SOURCE_ERROR,
+                    query=query,
+                    url=url,
+                    error=error,
                 )
             )
             self._log(f"{source}: {error}")
@@ -266,6 +320,7 @@ class _Resolution:
                 source=source,
                 status=SOURCE_OK if accepted is not None else SOURCE_NOT_FOUND,
                 query=query,
+                url=url,
                 candidates=len(candidates),
             )
         )
@@ -299,7 +354,7 @@ class _Resolution:
             )
             for candidate in candidates
         ]
-        score, candidate = max(scored, key=lambda pair: pair[0])
+        score, candidate = best_candidate(scored)
 
         if authoritative:
             confidence = 1.0
@@ -322,12 +377,94 @@ class _Resolution:
                 )
 
         for name, value in _candidate_fields(candidate):
+            if name in self._fields_a_different_edition_may_not_take(candidate):
+                continue
             self.record.set_field(
-                name, value, source=source, method=query, confidence=confidence
+                name,
+                value,
+                source=source,
+                method=query,
+                confidence=self._field_confidence(name, candidate, confidence),
             )
+        self._warn_about_record(source, candidate)
+        if candidate.note:
+            self.record.warn(candidate.note)
         return candidate
 
     # -- helpers -------------------------------------------------------------
+
+    def _field_confidence(
+        self, name: str, candidate: Candidate, confidence: float
+    ) -> float:
+        """A posting may fill a gap, but never outrank what the PDF showed."""
+        if candidate.is_preprint and name in ("venue", "year"):
+            return min(confidence, PREPRINT_CONFIDENCE)
+        return confidence
+
+    def _local_year(self) -> int | None:
+        """The year the PDF itself gave, when it is worth defending."""
+        if self._pdf_year is None or self._pdf_year_confidence < LOCAL_YEAR_FLOOR:
+            return None
+        return self._pdf_year
+
+    def _year_is_too_far(self, candidate: Candidate) -> bool:
+        """True when the candidate's year cannot be the year of this paper."""
+        local = self._local_year()
+        if local is None or candidate.year is None:
+            return False
+        return abs(local - candidate.year) > YEAR_DISTANCE
+
+    def _fields_a_different_edition_may_not_take(
+        self, candidate: Candidate
+    ) -> tuple[str, ...]:
+        """Fields a record years away from the local year may not contribute.
+
+        Such a record is a different edition of the paper - a mirror, a
+        re-deposit, a later reprint. It may still say which paper this is (its
+        title, its authors, its identifiers), but its year, venue and DOI belong
+        to that edition, not to the file being read.
+        """
+        if not self._year_is_too_far(candidate):
+            return ()
+        return ("year", "venue", "doi", "url")
+
+    def _warn_about_record(self, source: str, candidate: Candidate) -> None:
+        """Say so when a record disagrees with what the PDF itself showed.
+
+        A posting is not allowed to overwrite the venue or year printed on the
+        paper, and a record years away from the local year is a different
+        edition of the paper. Both are reported even though the fields they
+        touch were already refused or capped.
+        """
+        local_year, local_venue = self._local_year(), self._pdf_venue
+        if candidate.is_preprint:
+            if (
+                local_venue
+                and candidate.venue
+                and local_venue.casefold() != candidate.venue.casefold()
+            ):
+                matched = (
+                    f"a {candidate.year} preprint" if candidate.year else "a preprint"
+                )
+                self.record.warn(
+                    f"local venue suggests {local_venue}; "
+                    f"the matched record is {matched}"
+                )
+            if (
+                local_year is not None
+                and candidate.year is not None
+                and local_year != candidate.year
+            ):
+                self.record.warn(
+                    f"local year {local_year} disagrees with the "
+                    f"{candidate.year} preprint record"
+                )
+            return
+        if self._year_is_too_far(candidate):
+            self.record.warn(
+                f"local year {local_year} disagrees with the {candidate.year} "
+                f"record from {source}; keeping the local year"
+            )
 
     def _report_disagreement(self, label: str, candidate: Candidate) -> None:
         """Warn when a looked-up record does not look like the PDF's paper.
@@ -368,6 +505,24 @@ class _Resolution:
     def _log(self, message: str) -> None:
         if self.verbose:
             print(f"apr: {message}", file=sys.stderr)
+
+
+def _crossref_queries(title: str, authors: Sequence[str]) -> list[str]:
+    """The bibliographic queries to try, in order, until one is acceptable.
+
+    The plain title first: it is what a publisher's own record is registered
+    under. Only when that finds nothing is the first author added, and then the
+    first few words - a title with a long subtitle is still a match on its first
+    half.
+    """
+    queries = [title]
+    first_author = surname(authors[0]) if authors else ""
+    if first_author:
+        queries.append(f"{title} {first_author}")
+    shortened = " ".join(title.split()[:TITLE_WORDS])
+    if shortened and shortened != title:
+        queries.append(shortened)
+    return queries
 
 
 def _as_candidates(found: Candidate | list[Candidate] | None) -> list[Candidate]:

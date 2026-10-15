@@ -1,0 +1,374 @@
+{
+ "status": "ok",
+ "message": {
+  "items": [
+   {
+    "DOI": "10.1109/wacv57701.2024.00479",
+    "type": "proceedings-article",
+    "title": [
+     "Towards More Realistic Membership Inference Attacks on Large Diffusion Models"
+    ],
+    "container-title": [
+     "2024 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024,
+       1,
+       3
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Jan",
+      "family": "Dubiński",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Antoni",
+      "family": "Kowalczuk",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Stanisław",
+      "family": "Pawlak",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Przemyslaw",
+      "family": "Rokita",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Tomasz",
+      "family": "Trzcinski",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Paweł",
+      "family": "Morawiecki",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Polish Academy of Sciences"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "IEEE"
+   },
+   {
+    "DOI": "10.5220/0013182600003912",
+    "type": "proceedings-article",
+    "title": [
+     "Membership Inference Attacks for Face Images Against Fine-Tuned Latent Diffusion Models"
+    ],
+    "container-title": [
+     "Proceedings of the 20th International Joint Conference on Computer Vision, Imaging and Computer Graphics Theory and Applications"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Lauritz",
+      "family": "Holme",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Department of Applied Mathematics and Computer Science, Technical University of Denmark, Kongens Lyngby, Denmark"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Anton",
+      "family": "Storgaard",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Department of Applied Mathematics and Computer Science, Technical University of Denmark, Kongens Lyngby, Denmark"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Siavash",
+      "family": "Bigdeli",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Department of Applied Mathematics and Computer Science, Technical University of Denmark, Kongens Lyngby, Denmark"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "SCITEPRESS - Science and Technology Publications"
+   },
+   {
+    "DOI": "10.1109/spw59333.2023.00013",
+    "type": "proceedings-article",
+    "title": [
+     "Membership Inference Attacks against Diffusion Models"
+    ],
+    "container-title": [
+     "2023 IEEE Security and Privacy Workshops (SPW)"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2023,
+       5
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Tomoya",
+      "family": "Matsumoto",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Osaka University,Osaka,Japan"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Takayuki",
+      "family": "Miura",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Osaka University,NTT Social Informatics Laboratories,Tokyo,Japan"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Naoto",
+      "family": "Yanai",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Osaka University,Osaka,Japan"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "IEEE"
+   },
+   {
+    "DOI": "10.14722/ndss.2025.230324",
+    "type": "proceedings-article",
+    "title": [
+     "Black-box Membership Inference Attacks against Fine-tuned Diffusion Models"
+    ],
+    "container-title": [
+     "Proceedings 2025 Network and Distributed System Security Symposium"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Yan",
+      "family": "Pang",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Tianhao",
+      "family": "Wang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Internet Society"
+   },
+   {
+    "DOI": "10.5220/0012863100003767",
+    "type": "proceedings-article",
+    "title": [
+     "Membership Inference Attacks Against Indoor Location Models"
+    ],
+    "container-title": [
+     "Proceedings of the 21st International Conference on Security and Cryptography"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Vahideh",
+      "family": "Moghtadaiee",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Cyberspace Research Institute, Shahid Beheshti University, Tehran, Iran, --- Select a Country ---"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Amir",
+      "family": "Fathalizadeh",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Cyberspace Research Institute, Shahid Beheshti University, Tehran, Iran, --- Select a Country ---"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Mina",
+      "family": "Alishahi",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Department of Computer Science, Open Universiteit, Amsterdam, The Netherlands, --- Select a Country ---"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "SCITEPRESS - Science and Technology Publications"
+   }
+  ]
+ }
+}

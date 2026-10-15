@@ -20,9 +20,11 @@ from typing import Any
 
 #: Weights of the score components. Components neither side can supply are left
 #: out and the rest renormalised, so a missing year never counts as a mismatch.
-TITLE_WEIGHT = 0.80
+#: The year carries real weight: a record years away from the year the PDF
+#: prints must not look confident (see ``YEAR_DISTANCE``).
+TITLE_WEIGHT = 0.65
 AUTHOR_WEIGHT = 0.15
-YEAR_WEIGHT = 0.05
+YEAR_WEIGHT = 0.20
 
 #: A bibliographic candidate below this is not offered at all.
 MATCH_THRESHOLD = 0.60
@@ -32,6 +34,17 @@ CONFIDENT_MATCH = 0.85
 
 #: Below this a looked-up record is reported as disagreeing with the PDF text.
 CROSS_CHECK_THRESHOLD = 0.5
+
+#: Scores this close are the same evidence, so a published record can win over a
+#: posted copy of the same paper.
+COMPARABLE_SCORE = 0.02
+
+#: Years between a local year and a candidate's year past which the candidate is
+#: a different record: a re-deposit, a mirror, or another edition.
+YEAR_DISTANCE = 3
+
+#: Record types that mean "somebody posted this", not a published record.
+PREPRINT_TYPES = frozenset({"preprint", "posted-content"})
 
 #: How many of the local authors are compared; papers list many, and the first
 #: few carry the signal.
@@ -51,6 +64,16 @@ class Candidate:
     arxiv_version: str | None = None
     url: str | None = None
     abstract: str | None = None
+    #: The provider's own record type, e.g. ``journal-article`` or ``preprint``.
+    type: str | None = None
+    #: Something about this record the user should know, e.g. that arXiv reports
+    #: a newer version than the file.
+    note: str | None = None
+
+    @property
+    def is_preprint(self) -> bool:
+        """True for a posting rather than a published record."""
+        return self.type in PREPRINT_TYPES
 
 
 # --------------------------------------------------------------------------
@@ -103,6 +126,14 @@ def arxiv_url(arxiv_id: str, version: str | None = None) -> str:
     return f"https://arxiv.org/abs/{arxiv_id}{version or ''}"
 
 
+def normalise_arxiv_version(value: Any) -> str | None:
+    """``'v3'``, ``'3'`` and ``'V3'`` all mean ``'v3'``; anything else is dropped."""
+    if not isinstance(value, str):
+        return None
+    text = value.strip().lower().removeprefix("v")
+    return f"v{text}" if text.isdigit() else None
+
+
 def canonical_url(
     *, doi: str | None = None, arxiv_id: str | None = None, version: str | None = None
 ) -> str | None:
@@ -152,15 +183,27 @@ def full_name(given: Any, family: Any) -> str | None:
     return " ".join(parts) or None
 
 
+_NAME_SUFFIXES = frozenset({"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"})
+
+
 def invert_name(name: Any) -> str:
-    """``'Dubiński, Jan'`` -> ``'Jan Dubiński'``; other forms are kept."""
+    """Turn a family-first name around: ``'Zeng, Cheng'`` -> ``'Cheng Zeng'``.
+
+    Services mix the two orders inside one author list, so the comma decides:
+    only the part after the *last* comma is treated as a given name. A suffix
+    (``'Smith, John, Jr.'``) or an empty head means the name is left as printed,
+    and a name without a comma is never touched.
+    """
     if not isinstance(name, str):
         return ""
     text = " ".join(name.split())
     if "," not in text:
         return text
-    family, _, given = text.partition(",")
-    return " ".join(part for part in (given.strip(), family.strip()) if part)
+    head, _, tail = text.rpartition(",")
+    head, tail = head.strip(), tail.strip()
+    if not head or not tail or tail.casefold() in _NAME_SUFFIXES:
+        return text
+    return f"{tail} {head}"
 
 
 _NON_NAME = re.compile(r"[^\w\s'-]", re.UNICODE)
@@ -270,6 +313,29 @@ def score_candidate(
         components.append((YEAR_WEIGHT, year_score(year, candidate.year)))
     total = sum(weight for weight, _ in components)
     return sum(weight * value for weight, value in components) / total
+
+
+def preference(candidate: Candidate) -> int:
+    """How much a candidate is preferred when the scores are the same.
+
+    A published record beats a posting of the same paper, and a record that
+    carries a DOI beats one that does not: a mirror of a paper and the
+    proceedings version of it match on title and authors alike. Publication is
+    the stronger of the two signals, so a published record without a DOI still
+    outranks a posting that has one.
+    """
+    return (0 if candidate.is_preprint else 2) + (1 if candidate.doi else 0)
+
+
+def best_candidate(scored: list[tuple[float, Candidate]]) -> tuple[float, Candidate]:
+    """The candidate to offer: the highest score, published records first.
+
+    Only scores within :data:`COMPARABLE_SCORE` of the best are reordered, so a
+    clearly better match still wins even when it is a preprint.
+    """
+    top = max(score for score, _ in scored)
+    comparable = [pair for pair in scored if top - pair[0] <= COMPARABLE_SCORE]
+    return max(comparable, key=lambda pair: (preference(pair[1]), pair[0]))
 
 
 def cross_check(

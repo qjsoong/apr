@@ -1,0 +1,100 @@
+{
+ "id": "https://openalex.org/W4416572608",
+ "doi": "https://doi.org/10.48550/arxiv.2505.21469",
+ "ids": {
+  "openalex": "https://openalex.org/W4416572608",
+  "doi": "https://doi.org/10.48550/arxiv.2505.21469"
+ },
+ "title": "PropMolFlow: Property-Guided Molecule Generation with Geometry-Complete Flow Matching",
+ "display_name": "PropMolFlow: Property-Guided Molecule Generation with Geometry-Complete Flow Matching",
+ "publication_year": 2025,
+ "type": "preprint",
+ "primary_location": {
+  "landing_page_url": "http://arxiv.org/abs/2505.21469",
+  "source": {
+   "display_name": "arXiv (Cornell University)"
+  }
+ },
+ "authorships": [
+  {
+   "author_position": "first",
+   "author": {
+    "display_name": "Zeng, Cheng"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Jirui Jin"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Ambrose, Connor"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "George Karypis"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Mark K. Transtrum"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Ellad B. Tadmor"
+   }
+  }
+ ],
+ "abstract_inverted_index": {
+  "Molecule": [
+   0
+  ],
+  "generation": [
+   1
+  ],
+  "is": [
+   2
+  ],
+  "advancing": [
+   3
+  ],
+  "rapidly": [
+   4
+  ],
+  "in": [
+   5
+  ],
+  "chemical": [
+   6
+  ],
+  "discovery": [
+   7
+  ],
+  "and": [
+   8
+  ],
+  "drug": [
+   9
+  ],
+  "design.": [
+   10
+  ],
+  "Flow": [
+   11
+  ],
+  "matching": [
+   12
+  ],
+  "methods": [
+   13
+  ]
+ }
+}

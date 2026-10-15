@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/j4JQY3XDxEkk5BjcNLV4dbKkPP8</id>
+  <title>arXiv Query: search_query=ti:"MIN-K%++: IMPROVED BASELINE FOR DETECTING PRE-TRAINING DATA FROM LARGE LANGUAGE MODELS" AND au:"Zhang"&amp;id_list=&amp;start=0&amp;max_results=5</title>
+  <updated>2026-10-15T18:04:05Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=ti:%22MIN-K%25%2B%2B:+IMPROVED+BASELINE+FOR+DETECTING+PRE-TRAINING+DATA+FROM+LARGE+LANGUAGE+MODELS%22+AND+au:%22Zhang%22&amp;start=0&amp;max_results=5&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2404.02936v4</id>
+    <title>Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large Language Models</title>
+    <updated>2025-02-12T04:41:34Z</updated>
+    <link href="https://arxiv.org/abs/2404.02936v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.02936v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The problem of pre-training data detection for large language models (LLMs) has received growing attention due to its implications in critical issues like copyright violation and test data contamination. Despite improved performance, existing methods (including the state-of-the-art, Min-K%) are mostly developed upon simple heuristics and lack solid, reasonable foundations. In this work, we propose a novel and theoretically motivated methodology for pre-training data detection, named Min-K%++. Specifically, we present a key insight that training samples tend to be local maxima of the modeled distribution along each input dimension through maximum likelihood training, which in turn allow us to insightfully translate the problem into identification of local maxima. Then, we design our method accordingly that works under the discrete distribution modeled by LLMs, whose core idea is to determine whether the input forms a mode or has relatively high probability under the conditional categorical distribution. Empirically, the proposed method achieves new SOTA performance across multiple settings. On the WikiMIA benchmark, Min-K%++ outperforms the runner-up by 6.2% to 10.5% in detection AUROC averaged over five models. On the more challenging MIMIR benchmark, it consistently improves upon reference-free methods while performing on par with reference-based method that requires an extra reference model.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-03T04:25:01Z</published>
+    <arxiv:comment>ICLR'25 Spotlight. Project page and code is available at https://zjysteven.github.io/mink-plus-plus/</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jingyang Zhang</name>
+    </author>
+    <author>
+      <name>Jingwei Sun</name>
+    </author>
+    <author>
+      <name>Eric Yeats</name>
+    </author>
+    <author>
+      <name>Yang Ouyang</name>
+    </author>
+    <author>
+      <name>Martin Kuo</name>
+    </author>
+    <author>
+      <name>Jianyi Zhang</name>
+    </author>
+    <author>
+      <name>Hao Frank Yang</name>
+    </author>
+    <author>
+      <name>Hai Li</name>
+    </author>
+  </entry>
+</feed>
