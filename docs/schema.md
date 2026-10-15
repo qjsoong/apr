@@ -61,7 +61,7 @@ instead, so that a pretty-printed stream stays valid JSON.
 | `disputed` | `true` | Present only when a looked-up record contradicts the printed text. |
 | `provenance` | object | Per field: `source`, `method`, `confidence` of the accepted value. |
 | `sources` | array | One entry per online lookup: `source`, `status`, `query`/`url`, `candidates`, `error`. Empty offline. |
-| `evidence` | array | Only with `--why`: every value considered, with `applied` true/false. |
+| `evidence` | array | Only with `--why`: every value considered. `applied` is true when the value was accepted at the moment it was offered; a later, better-evidenced value can still replace it, so `provenance` is what says who won. |
 
 ## Values and meaning
 
