@@ -1,0 +1,85 @@
+{
+ "id": "https://openalex.org/W4403891981",
+ "doi": "https://doi.org/10.1038/s41467-024-53632-4",
+ "ids": {
+  "openalex": "https://openalex.org/W4403891981",
+  "doi": "https://doi.org/10.1038/s41467-024-53632-4",
+  "pmid": "https://pubmed.ncbi.nlm.nih.gov/39472567"
+ },
+ "title": "TamGen: drug design with target-aware molecule generation through a chemical language model",
+ "display_name": "TamGen: drug design with target-aware molecule generation through a chemical language model",
+ "publication_year": 2024,
+ "type": "article",
+ "primary_location": {
+  "landing_page_url": "https://doi.org/10.1038/s41467-024-53632-4",
+  "source": {
+   "id": "https://openalex.org/S64187185",
+   "display_name": "Nature Communications",
+   "type": "journal"
+  }
+ },
+ "authorships": [
+  {
+   "author_position": "first",
+   "author": {
+    "display_name": "Kehan Wu"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Yingce Xia"
+   }
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "display_name": "Pan Deng"
+   }
+  }
+ ],
+ "abstract_inverted_index": {
+  "Abstract": [
+   0
+  ],
+  "Generative": [
+   1
+  ],
+  "drug": [
+   2
+  ],
+  "design": [
+   3
+  ],
+  "facilitates": [
+   4
+  ],
+  "the": [
+   5
+  ],
+  "creation": [
+   6
+  ],
+  "of": [
+   7
+  ],
+  "compounds": [
+   8
+  ],
+  "effective": [
+   9
+  ],
+  "against": [
+   10
+  ],
+  "pathogenic": [
+   11
+  ],
+  "target": [
+   12
+  ],
+  "proteins.": [
+   13
+  ]
+ }
+}
