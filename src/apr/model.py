@@ -139,6 +139,11 @@ class PaperRecord:
     evidence: list[Evidence] = field(default_factory=list)
     sources: list[SourceAttempt] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    #: True when a value contradicts something the document itself shows, e.g. an
+    #: identifier lookup whose record disagrees with the printed title. The value
+    #: still wins - it is what the identifier says - but a caller can refuse to
+    #: trust it without parsing warnings.
+    disputed: bool = False
 
     # -- contributing values -------------------------------------------------
 
@@ -279,6 +284,8 @@ class PaperRecord:
             )
         if self.warnings:
             out["warnings"] = list(self.warnings)
+        if self.disputed:
+            out["disputed"] = True
         out["provenance"] = {
             name: self.provenance[name].to_dict()
             for name in FIELDS

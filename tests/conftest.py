@@ -28,6 +28,10 @@ def _no_network(
             "APR_TEST_ALLOW_NETWORK=1 to allow live requests"
         )
 
+    # Cover the whole in-process path: name resolution as well as the connection
+    # itself. Subprocesses are outside this guard, which is why the corpus run is
+    # additionally checked inside an empty network namespace.
+    monkeypatch.setattr(socket, "getaddrinfo", guard)
     monkeypatch.setattr(socket.socket, "connect", guard)
     monkeypatch.setattr(socket.socket, "connect_ex", guard)
     monkeypatch.setattr(socket, "create_connection", guard)

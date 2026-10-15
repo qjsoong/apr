@@ -9,6 +9,8 @@ from __future__ import annotations
 import email.message
 import io
 import json
+import os
+import stat
 import urllib.error
 import urllib.request
 from collections.abc import Mapping
@@ -125,6 +127,20 @@ def test_two_urls_get_two_cache_entries(tmp_path: Path) -> None:
     http.get_json("https://example.test/b", options=options)
 
     assert len(list(tmp_path.glob("*.json"))) == 2
+
+
+def test_cache_entries_are_private_to_the_user(tmp_path: Path) -> None:
+    """The cached URL carries the extracted title and any --mailto address."""
+    if os.name == "nt":
+        pytest.skip("POSIX file modes are what this asserts")
+    opener = FakeOpener((200, b'{"ok": true}', {}))
+    options, _ = options_for(opener, cache_dir=tmp_path / "cache")
+
+    http.get_json("https://example.test/paper", options=options)
+
+    entry = next((tmp_path / "cache").glob("*.json"))
+    assert stat.S_IMODE(entry.stat().st_mode) == 0o600
+    assert stat.S_IMODE((tmp_path / "cache").stat().st_mode) == 0o700
 
 
 def test_the_cache_is_disabled_when_cache_dir_is_none() -> None:

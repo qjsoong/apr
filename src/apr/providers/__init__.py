@@ -293,7 +293,18 @@ class _Resolution:
         is the request the caller made, for the source log.
         """
         if self.options.out_of_budget:
+            # Say so in the machine-readable record, not only on stderr: a caller
+            # must be able to tell "this provider had nothing" from "apr stopped
+            # asking", which is what a spent request budget means.
             self._log(f"{source}: skipped, request budget of {MAX_REQUESTS} spent")
+            self.record.add_source(
+                SourceAttempt(
+                    source=source,
+                    status=SOURCE_SKIPPED,
+                    query=query,
+                    error=f"request budget of {MAX_REQUESTS} spent",
+                )
+            )
             return None
         try:
             found = call()
@@ -483,6 +494,9 @@ class _Resolution:
             f"looked-up record for {label} disagrees with the PDF text "
             f"(similarity {agreement:.2f}); the PDF may carry a stale identifier"
         )
+        # A machine-readable flag next to the warning: a caller that never looks
+        # at human-readable warnings can still refuse to trust this record.
+        self.record.disputed = True
 
     def _local_title(self) -> str | None:
         title = self.record.title

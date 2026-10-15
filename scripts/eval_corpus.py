@@ -4,7 +4,7 @@
 The corpus is a local directory of papers (default ``~/doc/paper``, override with
 ``--corpus`` or ``APR_CORPUS``); it is copyrighted and never distributed with the
 repository. The expectations in ``tests/corpus/expected.json`` were verified
-against arXiv, Crossref, DBLP and publisher pages, independently of the code
+against arXiv, Crossref and the publishers' own pages, independently of the code
 being measured here.
 
 Comparison is deliberately dumb and independent of apr's own matching code:

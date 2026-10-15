@@ -206,9 +206,12 @@ def _read_cache(cache_dir: Path, url: str) -> str | None:
 def _write_cache(cache_dir: Path, url: str, body: str) -> None:
     path = cache_path(cache_dir, url)
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
+        # The cached URL carries the extracted title and any --mailto address, so
+        # keep the directory and the entries private to the user who ran apr.
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         temporary = path.with_suffix(".part")
         temporary.write_text(json.dumps({"url": url, "body": body}), "utf-8")
+        temporary.chmod(0o600)
         temporary.replace(path)
     except OSError:
         # A cache that cannot be written must never fail the lookup.

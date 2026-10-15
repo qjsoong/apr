@@ -25,10 +25,10 @@ stdout, no colour, no progress. Field names are stable within
   "arxiv_version": "v2",
   "url": "https://arxiv.org/abs/2610.01939v2",
   "abstract": "…",
-  "warnings": ["pdf /Title is truncated; used first-page text"],
+  "warnings": ["embedded title looks truncated; used the title printed on page 1"],
   "provenance": {
     "title": {"source": "pdf-first-page", "method": "layout:largest-font", "confidence": 0.8},
-    "authors": {"source": "pdf-first-page", "method": "layout:below-title", "confidence": 0.7}
+    "authors": {"source": "pdf-first-page", "method": "layout:author-block", "confidence": 0.7}
   },
   "sources": [{"source": "arxiv", "status": "ok", "query": "id_list=2610.01939", "candidates": 1}]
 }
@@ -58,6 +58,7 @@ instead, so that a pretty-printed stream stays valid JSON.
 | `url` | string \| null | Landing page for the canonical record. |
 | `abstract` | string \| null | `null` with `--no-abstract` (the key stays, so consumers see a stable shape). |
 | `warnings` | array | Present only when something was noticed, e.g. truncated metadata. |
+| `disputed` | `true` | Present only when a looked-up record contradicts the printed text. |
 | `provenance` | object | Per field: `source`, `method`, `confidence` of the accepted value. |
 | `sources` | array | One entry per online lookup: `source`, `status`, `query`/`url`, `candidates`, `error`. Empty offline. |
 | `evidence` | array | Only with `--why`: every value considered, with `applied` true/false. |
@@ -80,8 +81,16 @@ instead, so that a pretty-printed stream stays valid JSON.
 - `status` is `unidentified` without a title, `identified` when the title is
   confident (≥ 0.70) and at least one author is known, `probable` otherwise.
 - `source` names the stage: `filename`, `pdf-info`, `pdf-xmp`, `pdf-first-page`,
-  `arxiv`, `crossref`, `openalex`, `semanticscholar`, `datacite`.
-- `sources[].status` is `ok`, `not-found`, `error` or `skipped` (offline).
+  `arxiv`, `crossref`, `openalex`, `semanticscholar`, `datacite`, or `online` for
+  the single entry recorded when `--online` had nothing to look up.
+- `sources[].status` is `ok`, `not-found`, `error` or `skipped`. Offline,
+  `sources` is always empty. Online, `skipped` means the request was not made —
+  in practice because the per-file request budget was already spent, which the
+  entry's `error` says.
+- `disputed` appears only when a value contradicts something the document itself
+  prints: an identifier lookup whose record disagrees with the title on the page.
+  The identifier's values still win — that is what the identifier says — but a
+  caller can refuse to trust them without parsing `warnings`.
 
 ## Exit codes
 
@@ -91,6 +100,7 @@ instead, so that a pretty-printed stream stays valid JSON.
 | 1 | At least one input produced no title. |
 | 2 | At least one input could not be read (and `apr:` message on stderr). |
 | 130 | Interrupted (SIGINT). |
+| 141 | stdout was a closed pipe (`apr f.pdf \| head -1`). |
 
 `2` outranks `1`: a file that could not be read is an error, not a failed
 identification.

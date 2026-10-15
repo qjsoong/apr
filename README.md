@@ -103,9 +103,9 @@ NIPS-2017-attention-is-all-you-need-Paper.pdf -> Vaswani 2017 - Attention Is All
 s41467-026-75702-5.pdf                    -> Ahamed 2026 - Mol-CADiff text-conditional ....pdf
 ```
 
-Check `status` and `provenance` if you would rather not rename on a guess, and
-truncate as crudely as your filesystem demands: apr identifies papers, it does
-not decide what a good file name is.
+Check `status`, `disputed` and `provenance` if you would rather not rename on a
+guess, and truncate as crudely as your filesystem demands: apr identifies
+papers, it does not decide what a good file name is.
 
 ## Offline by default
 
@@ -127,7 +127,11 @@ extracted — not the PDF, and not the page text** — to these keyless services
 
 Set `--mailto you@example.com` (or `APR_MAILTO`) to identify yourself to the
 polite pools, as those services ask. Responses are cached under
-`$XDG_CACHE_HOME/apr`; `--no-cache` disables that. Nothing is sent anywhere
+`$XDG_CACHE_HOME/apr`, in files readable only by you, because the cached request
+URL contains the extracted title and your `--mailto` address; `--no-cache`
+keeps nothing on disk. Entries do not expire, so delete that directory if you
+want them gone. Requests honour `http_proxy`/`https_proxy` and follow whatever
+redirect the service returns, like any HTTP client. Nothing is sent anywhere
 else, and apr operates no service of its own.
 
 ## How it decides
@@ -200,10 +204,11 @@ GUI, no PyPI publication. If you need those, Zotero and `curl` already exist;
 Twelve real papers — arXiv, IEEE, ICLR, NeurIPS and Nature-family PDFs, each
 with different metadata quirks — are scored against
 [tests/corpus/expected.json](tests/corpus/expected.json), whose every field was
-verified against arXiv, Crossref, DBLP and the publishers' own pages by someone
-who did not write the code. The numbers, the failures and the method are in
-[docs/evaluation.md](docs/evaluation.md). The corpus is copyrighted and is not
-distributed with the repository.
+verified against arXiv, Crossref and the publishers' own pages by someone who
+did not write the code. Both modes identify all twelve titles and first authors;
+one title matches through a documented alternate wording, and the numbers, the
+failures and the method are in [docs/evaluation.md](docs/evaluation.md). The
+corpus is copyrighted and is not distributed with the repository.
 
 ## Development
 

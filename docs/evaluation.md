@@ -47,6 +47,7 @@ file carries no such identifier, so there is nothing to compare.
 | --- | --- | --- | --- |
 | Non-empty title | 12/12 | 12/12 | 12/12 / — |
 | Title exactly equal to the authority | **12/12** | **12/12** | 9/12 / 11/12 |
+| …of which matched a documented alternate wording | 1 | 1 | — |
 | First author (surname) equal | **12/12** | **12/12** | 9/12 / 11/12 |
 | Year equal | 12/12 | 12/12 | not a bar |
 | DOI equal, where the file has one | 4/5 | 5/5 + WACV | not a bar |
@@ -60,6 +61,16 @@ file carries no such identifier, so there is nothing to compare.
 The one imperfect offline cell is the WACV paper's DOI: the PDF carries no DOI,
 so offline `apr` cannot know the published version's `10.1109/wacv57701.2024.00479`.
 Online it finds it by title. Nothing else on any file was wrong in either mode.
+
+Two of these cells are weaker evidence than the rest, and the reader should know
+which. The title column includes one file whose title matches a *different
+authority's wording* of the same paper (the ICLR record prints `Pre-Training Data
+Detection from` where arXiv prints `Detecting Pre-Training Data from`); excluding
+that allowance the honest figure is 11/12 plus one correct identification. And
+the year column for the two conference files agrees partly because apr's year
+hint and the answer key's year both come from the file name (the venues are not
+in question: those PDFs print `ICLR 2025` and `NIPS 2017` on page 1). Titles and
+first authors are not file-name-derived for any of the twelve.
 
 Two cases are worth naming because they are the ones a plausible implementation
 gets wrong:
@@ -89,10 +100,11 @@ These are not accuracy measurements; each one is a claim the README makes.
 | Artifacts carry the licence | `unzip -l dist/apr-0.1.0-py3-none-any.whl` and the sdist | `LICENSE` in both; wheel contains only the package |
 | The point of the tool works | A shell loop renames three corpus PDFs from `jq`-extracted fields, offline | `Vaswani 2017 - Attention Is All You Need.pdf`, etc. |
 
-## Defects this scoreboard found and fixed
+## Defects the measurements found and fixed
 
 The first measurement was not a pass. Each of these was found by running the
-corpus, not by reading the code, and each is now pinned by a test:
+corpus or by an independent review, not by reading the code, and each is now
+pinned by a test:
 
 | Defect | Found by |
 | --- | --- |
@@ -104,6 +116,10 @@ corpus, not by reading the code, and each is now pinned by a test:
 | arXiv year taken from the first version rather than the version in the file (`v3`, 2024) | year column, `2310.16789v3.pdf` |
 | `path` reported the stdin spool file (`/tmp/apr-stdin-….pdf`) instead of `-` | comparing output against `docs/schema.md` |
 | `--cache-dir` documented `$XDG_CACHE_HOME/apr` while the default was no cache at all | looking for the cache after an online run |
+| `docs/schema.md` disagreed with real output in four places: exit 141 undocumented, the `online` provenance source missing, `skipped` described as offline, and invented method and warning strings | independent review, against the contract |
+| A spent request budget was visible only on stderr with `-v`, so a caller could not tell "provider had nothing" from "apr stopped asking" | independent review |
+| A disagreement between an identifier's record and the printed text was reported only in human-readable `warnings` | independent review |
+| The cache stored the extracted title and any `--mailto` address world-readable | independent review |
 
 ## Limits
 

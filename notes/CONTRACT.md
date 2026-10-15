@@ -53,9 +53,10 @@ non-PDF input, browser/extension integration.
 
 - Python ≥ 3.10, one runtime dependency (`pypdf`), no compiled extensions, no
   API keys, no accounts, no cost.
-- Offline by default. `--online` sends the extracted identifiers and page-one
-  text to arXiv, Crossref, OpenAlex and Semantic Scholar — documented in the
-  README.
+- Offline by default. `--online` sends the extracted title, authors, year and
+  identifiers to arXiv, Crossref, OpenAlex, Semantic Scholar and DataCite —
+  never the PDF and never page text — and the README says so in the same breath
+  as the flag.
 - Zotero's `translate`/`zotero` sources are AGPL-3.0: read for design, **no code
   copied**.
 - The 12 real PDFs in `~/doc/paper` are used for local evaluation only and are

@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=(
             "Offline by default; --online also asks arXiv, Crossref, OpenAlex "
             "and Semantic Scholar. Exit codes: 0 identified, 1 unidentified, "
-            "2 error."
+            "2 error, 141 closed stdout."
         ),
     )
     parser.add_argument(

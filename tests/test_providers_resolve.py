@@ -273,6 +273,7 @@ def test_a_doi_that_disagrees_with_the_pdf_title_is_reported(
     assert record.title == resolved
     assert record.doi == "10.1038/s41467-025-60763-9"
     assert record.provenance["title"].source == "crossref"
+    assert record.disputed is True, "a contradiction must be machine-readable"
     # And the disagreement is reported, with the number behind it.
     agreement = title_score(TAMGEN_TITLE, resolved)
     assert agreement < CROSS_CHECK_THRESHOLD
@@ -304,6 +305,7 @@ def test_an_arxiv_id_that_disagrees_with_the_pdf_title_is_reported(
     resolve(record)
 
     assert record.title == MEMBERSHIP_TITLE  # the id still wins
+    assert record.disputed is True
     agreement = title_score(
         "A survey of protein folding with transformers", MEMBERSHIP_TITLE
     )
@@ -930,14 +932,17 @@ def test_the_budget_is_six_requests_and_later_steps_are_skipped(
     resolve(record)
 
     assert len(online.urls) == 6
-    assert sources(record) == [
-        ("crossref", SOURCE_NOT_FOUND),
-        ("openalex", SOURCE_NOT_FOUND),
-        ("datacite", SOURCE_NOT_FOUND),
-        ("semanticscholar", SOURCE_NOT_FOUND),
-        ("arxiv", SOURCE_NOT_FOUND),
-        ("crossref", SOURCE_NOT_FOUND),
-    ]
+    statuses = [status for _, status in sources(record)]
+    assert statuses[:6] == [SOURCE_NOT_FOUND] * 6
+    # Providers never asked are part of the record too, so a caller can tell
+    # "this provider had nothing" from "apr stopped asking": the budget spent is
+    # visible in sources rather than only on stderr.
+    assert statuses[6:] and set(statuses[6:]) == {SOURCE_SKIPPED}
+    assert all(
+        "request budget" in (attempt.error or "")
+        for attempt in record.sources
+        if attempt.status == SOURCE_SKIPPED
+    )
     assert record.title == MEMBERSHIP_TITLE
     assert record.provenance["title"].source == "pdf-first-page"
 

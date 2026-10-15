@@ -33,11 +33,12 @@ negotiated: `uv run ruff format .` is the answer.
 
 ## Rules the tests enforce
 
-- **No network in tests.** `tests/conftest.py` replaces `socket.connect` with a
-  guard. `apr` is offline by default and the suite keeps it that way. Tests that
-  genuinely need the network use recorded fixtures; if you must exercise a live
-  service, mark the test `network` and run it with
-  `APR_TEST_ALLOW_NETWORK=1`.
+- **No network in tests.** `tests/conftest.py` replaces `socket.connect`,
+  `socket.connect_ex`, `socket.create_connection` and `socket.getaddrinfo` with
+  a guard that raises, and `tests/test_network_guard.py` asserts the guard is
+  live. Its scope is the in-process path: a subprocess (for example the CLI test
+  that runs `python -m apr`) is not covered by it, which is why the corpus
+  evaluation is also run inside an empty network namespace.
 - **No PDFs in the repository.** Real papers are copyrighted. Unit tests build
   their own PDFs in `tests/fixtures/` with `scripts/make_fixtures.py`, which
   writes raw PDF syntax and needs no extra dependency. Evaluation against real
