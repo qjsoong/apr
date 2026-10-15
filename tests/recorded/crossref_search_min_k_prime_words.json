@@ -1,0 +1,291 @@
+{
+ "status": "ok",
+ "message": {
+  "items": [
+   {
+    "DOI": "10.7554/elife.20147.013",
+    "type": "component",
+    "title": [
+     "Figure 3—source data 1. Behavioral pre-training reveals enhanced learning in mice with enhanced LTD."
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       null
+      ]
+     ]
+    },
+    "publisher": "eLife Sciences Publications, Ltd"
+   },
+   {
+    "DOI": "10.1109/tpami.2025.3561598/mm1",
+    "type": "component",
+    "title": [
+     "PonderV2: Improved 3D Representation with A Universal Pre-training Paradigm_supp1-3561598.pdf"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       null
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Tong",
+      "family": "He",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Institute of Electrical and Electronics Engineers (IEEE)"
+   },
+   {
+    "DOI": "10.7717/peerj-cs.3593/fig-8",
+    "type": "component",
+    "title": [
+     "Figure 8: Training convergence comparison between the baseline YOLOv8n and the improved YOLOv8n + MS-DWConv + PIoU models on the CLCXray dataset."
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       null
+      ]
+     ]
+    },
+    "publisher": "PeerJ"
+   },
+   {
+    "DOI": "10.12792/jiiae.6.139",
+    "type": "journal-article",
+    "title": [
+     "Improved Pre-focusing Method and Its Application to Three-Dimensional Space Scanning for Detecting An Object"
+    ],
+    "container-title": [
+     "Journal of the Institute of Industrial Applications Engineers"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2018,
+       7,
+       25
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Takuma",
+      "family": "Sasaki",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Hiroshi",
+      "family": "Hanaizumi",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Institute of Industrial Applications Engineers"
+   },
+   {
+    "DOI": "10.21203/rs.3.rs-2428358/v1",
+    "type": "posted-content",
+    "title": [
+     "Improved reliability of intraoperative language testing through pre-operative baseline linguistic scores and baseline object naming"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2023,
+       1,
+       5
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Ina",
+      "family": "Moritz",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Felix R.",
+      "family": "Dreyer",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Freie Universität Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Ann-Kathrin",
+      "family": "Ohlerth",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "University of Groningen"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Mareike",
+      "family": "Koerber",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Chokri",
+      "family": "Chenitir",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Heike",
+      "family": "Schneider",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Pimrapat",
+      "family": "Gebert",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Peter",
+      "family": "Vajkoczy",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Thomas",
+      "family": "Picht",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Katharina",
+      "family": "Faust",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Charité - University Medicine Berlin"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Research Square Platform LLC"
+   }
+  ]
+ }
+}

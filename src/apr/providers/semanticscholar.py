@@ -9,6 +9,7 @@ from apr.match import (
     Candidate,
     abstract_from_inverted_index,
     canonical_url,
+    invert_name,
     normalise_doi,
     parse_arxiv_id,
 )
@@ -75,6 +76,7 @@ def _from_paper(paper: Any) -> Candidate | None:
         arxiv_version=version,
         url=canonical_url(doi=doi, arxiv_id=arxiv_id, version=version),
         abstract=_abstract(paper.get("abstract")),
+        type=_type(paper),
     )
 
 
@@ -85,7 +87,17 @@ def _authors(paper: dict[str, Any]) -> list[Any]:
 
 def _author_name(entry: Any) -> str | None:
     name = entry.get("name") if isinstance(entry, dict) else None
-    return " ".join(name.split()) if isinstance(name, str) and name.strip() else None
+    if not isinstance(name, str) or not name.strip():
+        return None
+    # Semantic Scholar prints mostly given-first, but not always.
+    return invert_name(name)
+
+
+def _type(paper: dict[str, Any]) -> str | None:
+    """Semantic Scholar's first publication type, e.g. ``JournalArticle``."""
+    types = paper.get("publicationTypes")
+    first = types[0] if isinstance(types, list) and types else None
+    return first.strip().lower() if isinstance(first, str) and first.strip() else None
 
 
 def _venue(paper: dict[str, Any]) -> str | None:

@@ -95,11 +95,13 @@ def test_arxiv_by_id_parses_the_recorded_feed(server: Server) -> None:
     assert candidate.authors[-1] == "Paweł Morawiecki"
     assert candidate.year == 2023
     assert candidate.venue == "arXiv"
+    assert candidate.type == "preprint"
     assert candidate.doi is None
     assert (candidate.arxiv_id, candidate.arxiv_version) == ("2306.12983", "v2")
     assert candidate.url == "https://arxiv.org/abs/2306.12983v2"
     assert candidate.abstract is not None
     assert candidate.abstract.startswith("Generative diffusion models")
+    assert candidate.note is None
     assert server.calls == [
         "https://export.arxiv.org/api/query?id_list=2306.12983&max_results=1"
     ]
@@ -117,6 +119,26 @@ def test_arxiv_by_id_reads_the_published_doi_and_journal_reference(
     assert candidate.venue == "Phys. Rev. D 104 (2021) 095029"
     assert candidate.year == 2021
     assert candidate.url == "https://arxiv.org/abs/2105.04565v3"
+    # A journal reference means the entry describes a published paper.
+    assert candidate.type == "article"
+
+
+def test_arxiv_by_id_follows_the_version_the_file_holds(server: Server) -> None:
+    """The API answers with the latest version; the file may hold an older one."""
+    server.serve("arxiv_id_2310.16789.xml")
+
+    latest = arxiv.by_id("2310.16789", reported_version="v3", options=server.options())
+    older = arxiv.by_id("2310.16789", reported_version="v2", options=server.options())
+    unknown = arxiv.by_id("2310.16789", options=server.options())
+
+    assert latest is not None and older is not None and unknown is not None
+    assert latest.year == 2024  # <updated>, the version in the file
+    assert latest.note is None
+    assert older.year == 2023  # <published>, the first version's year
+    assert older.note is not None
+    assert "version v2" in older.note and "v3" in older.note
+    assert unknown.year == 2023
+    assert unknown.note is None
 
 
 def test_arxiv_by_id_returns_nothing_for_an_empty_feed(server: Server) -> None:
@@ -209,11 +231,17 @@ def test_crossref_by_doi_returns_nothing_for_an_unknown_doi(server: Server) -> N
 
 
 def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> None:
-    server.serve("crossref_search_membership_inference.json")
+    """One query string, five rows, and nothing else narrowing it.
+
+    This replaced the old contract, which sent the first author alongside the
+    title as a separate ``query.author`` parameter. Since the bibliographic
+    search started losing records Crossref holds, the plain title goes first
+    and the author is only added if that finds nothing acceptable.
+    """
+    server.serve("crossref_search_membership_inference_plain.json")
 
     candidates = crossref.search(
         "Towards More Realistic Membership Inference Attacks on Large Diffusion Models",
-        ["Jan Dubiński"],
         mailto="me@example.com",
         options=server.options(),
     )
@@ -224,10 +252,12 @@ def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> Non
             "Models"
         ],
         "rows": ["5"],
-        "query.author": ["Dubiński"],
         "mailto": ["me@example.com"],
     }
+    assert "filter" not in server.last_url  # no date or type filter, ever
+    assert "query.author" not in server.last_url
     assert candidates[0].doi == "10.1109/wacv57701.2024.00479"
+    assert candidates[0].type == "proceedings-article"
     assert candidates[0].title == (
         "Towards More Realistic Membership Inference Attacks on Large Diffusion Models"
     )
@@ -238,11 +268,58 @@ def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> Non
     assert candidates[0].abstract is None
 
 
+def test_crossref_search_url_carries_no_filter_and_no_author(
+    server: Server,
+) -> None:
+    """The query is the caller's text; nothing narrows it behind their back.
+
+    The old contract put the first author in ``query.author``; the new one
+    carries a plain title and leaves the narrowing to the caller's retries.
+    """
+    url = crossref.bibliography_url("a plain title", mailto="me@example.com")
+
+    assert url == (
+        "https://api.crossref.org/works?query.bibliographic=a+plain+title"
+        "&rows=5&mailto=me%40example.com"
+    )
+    assert "filter" not in url
+    assert "query.author" not in url
+
+
 def test_crossref_ignores_a_body_without_a_message(server: Server) -> None:
     server.body('{"status": "ok"}')
 
     assert crossref.by_doi("10.1/x", options=server.options()) is None
     assert crossref.search("anything", options=server.options()) == []
+
+
+def test_crossref_puts_whole_names_in_one_order_too(server: Server) -> None:
+    """A work whose authors arrive as one ``name`` string, family-first."""
+    server.body(
+        json.dumps(
+            {
+                "status": "ok",
+                "message": {
+                    "DOI": "10.1109/wacv57701.2024.00479",
+                    "title": ["A title"],
+                    "author": [
+                        {"name": "Dubiński, Jan"},
+                        {"name": "IEEE Computer Society"},
+                        {"given": "Antoni", "family": "Kowalczuk"},
+                    ],
+                },
+            }
+        )
+    )
+
+    candidate = crossref.by_doi("10.1/x", options=server.options())
+
+    assert candidate is not None
+    assert candidate.authors == [
+        "Jan Dubiński",
+        "IEEE Computer Society",
+        "Antoni Kowalczuk",
+    ]
 
 
 # -- OpenAlex ---------------------------------------------------------------
@@ -271,6 +348,26 @@ def test_openalex_by_doi_parses_the_recorded_work(server: Server) -> None:
     )
     assert server.last_url.startswith("https://api.openalex.org/works/doi:")
     assert server.query() == {"mailto": ["me@example.com"]}
+    assert candidate.type == "article"
+
+
+def test_openalex_puts_mixed_author_names_in_one_order(server: Server) -> None:
+    """OpenAlex prints 'Zeng, Cheng' and 'Jirui Jin' in the same author list."""
+    server.serve("openalex_doi_10.48550_arxiv.2505.21469.json")
+
+    candidate = openalex.by_doi("10.48550/arxiv.2505.21469", options=server.options())
+
+    assert candidate is not None
+    assert candidate.authors == [
+        "Cheng Zeng",
+        "Jirui Jin",
+        "Connor Ambrose",
+        "George Karypis",
+        "Mark K. Transtrum",
+        "Ellad B. Tadmor",
+    ]
+    assert candidate.type == "preprint"
+    assert candidate.venue == "arXiv"
 
 
 def test_openalex_search_returns_every_candidate_it_can_parse(server: Server) -> None:
@@ -334,7 +431,6 @@ def test_semanticscholar_by_doi_reads_the_external_identifiers(
 
 def test_semanticscholar_match_returns_the_recorded_best_match(server: Server) -> None:
     server.serve("semanticscholar_match_attention.json")
-
     candidates = semanticscholar.match(
         "Attention is all you need", options=server.options()
     )
@@ -349,6 +445,31 @@ def test_semanticscholar_match_returns_the_recorded_best_match(server: Server) -
     assert candidates[0].arxiv_id == "1706.03762"
     assert candidates[0].venue == "Neural Information Processing Systems"
     assert candidates[0].abstract is not None
+
+
+def test_semanticscholar_puts_whole_names_in_one_order_too(server: Server) -> None:
+    server.body(
+        json.dumps(
+            {
+                "data": [
+                    {
+                        "title": "A title",
+                        "authors": [
+                            {"authorId": "1", "name": "Vaswani, Ashish"},
+                            {"authorId": "2", "name": "Noam Shazeer"},
+                        ],
+                        "publicationTypes": ["JournalArticle"],
+                    }
+                ]
+            }
+        )
+    )
+
+    candidates = semanticscholar.match("a title", options=server.options())
+
+    assert candidates[0].authors == ["Ashish Vaswani", "Noam Shazeer"]
+    assert candidates[0].type == "journalarticle"
+    assert candidates[0].is_preprint is False
 
 
 def test_semanticscholar_reports_a_missing_match_as_nothing(server: Server) -> None:

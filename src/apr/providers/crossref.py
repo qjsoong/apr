@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from typing import Any
 from urllib.parse import quote, urlencode
 
@@ -10,9 +9,9 @@ from apr.match import (
     Candidate,
     canonical_url,
     full_name,
+    invert_name,
     normalise_doi,
     strip_markup,
-    surname,
 )
 from apr.providers import http
 from apr.providers.http import HttpOptions
@@ -29,21 +28,24 @@ def by_doi(
     return _from_message(_message(payload))
 
 
-def search(
-    title: str,
-    authors: Sequence[str] = (),
-    *,
-    mailto: str | None = None,
-    options: HttpOptions,
-) -> list[Candidate]:
-    """Candidate works for a title and, when known, its first author."""
-    params = {"query.bibliographic": title, "rows": str(SEARCH_ROWS)}
-    first_author = surname(authors[0]) if authors else ""
-    if first_author:
-        params["query.author"] = first_author
+def bibliography_url(query: str, *, mailto: str | None = None) -> str:
+    """The works?query.bibliographic=... URL for one query string.
+
+    No author parameter and no date filter: the query is the caller's text, so
+    the exact URL is known to whoever recorded the attempt.
+    """
+    params = {"query.bibliographic": query, "rows": str(SEARCH_ROWS)}
     if mailto:
         params["mailto"] = mailto
-    payload = _get_json(f"{API}?{urlencode(params)}", mailto=None, options=options)
+    return f"{API}?{urlencode(params)}"
+
+
+def search(
+    query: str, *, mailto: str | None = None, options: HttpOptions
+) -> list[Candidate]:
+    """Candidate works for one bibliographic query string."""
+    url = bibliography_url(query, mailto=mailto)
+    payload = _get_json(url, options=options)
     message = _message(payload)
     items = message.get("items") if isinstance(message, dict) else None
     if not isinstance(items, list):
@@ -57,7 +59,7 @@ def search(
     ]
 
 
-def _get_json(url: str, *, mailto: str | None, options: HttpOptions) -> Any:
+def _get_json(url: str, *, options: HttpOptions, mailto: str | None = None) -> Any:
     """GET, with the polite-pool address appended when the caller has one."""
     if mailto:
         separator = "&" if "?" in url else "?"
@@ -89,15 +91,25 @@ def _from_message(work: Any) -> Candidate | None:
         doi=doi,
         url=canonical_url(doi=doi),
         abstract=strip_markup(work.get("abstract")) or None,
+        type=_type(work),
     )
+
+
+def _type(work: dict[str, Any]) -> str | None:
+    """Crossref's record type, e.g. ``journal-article`` or ``posted-content``."""
+    value = work.get("type")
+    return value.strip().lower() if isinstance(value, str) and value.strip() else None
 
 
 def _author(entry: Any) -> str | None:
     if not isinstance(entry, dict):
         return None
-    return full_name(entry.get("given"), entry.get("family")) or full_name(
-        entry.get("name"), None
-    )
+    given, family = entry.get("given"), entry.get("family")
+    if isinstance(family, str) and family.strip():
+        return full_name(given, family)
+    # Organisations and some deposits print the whole name in one field, and
+    # some of those are family-first too.
+    return invert_name(entry.get("name")) or None
 
 
 def _year(work: dict[str, Any]) -> int | None:

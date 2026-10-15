@@ -10,6 +10,7 @@ from apr.match import (
     Candidate,
     abstract_from_inverted_index,
     canonical_url,
+    invert_name,
     normalise_doi,
     parse_arxiv_id,
 )
@@ -83,6 +84,7 @@ def _from_work(work: Any) -> Candidate | None:
         arxiv_version=version,
         url=canonical_url(doi=doi, arxiv_id=arxiv_id, version=version),
         abstract=abstract_from_inverted_index(work.get("abstract_inverted_index")),
+        type=_type(work),
     )
 
 
@@ -91,7 +93,16 @@ def _display_name(authorship: Any) -> str | None:
         return None
     author = authorship.get("author")
     name = author.get("display_name") if isinstance(author, dict) else None
-    return " ".join(name.split()) if isinstance(name, str) and name.strip() else None
+    if not isinstance(name, str) or not name.strip():
+        return None
+    # OpenAlex mixes "Cheng Zeng" and "Zeng, Cheng" inside one author list.
+    return invert_name(name)
+
+
+def _type(work: dict[str, Any]) -> str | None:
+    """OpenAlex's record type, e.g. ``article`` or ``preprint``."""
+    value = work.get("type")
+    return value.strip().lower() if isinstance(value, str) and value.strip() else None
 
 
 def _landing_page(work: dict[str, Any]) -> str:

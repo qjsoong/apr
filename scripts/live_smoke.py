@@ -32,7 +32,14 @@ from apr.providers import resolve
 
 CONFIDENT_MATCH = 0.85
 
-ARXIV_IDS = ("2306.12983", "2310.16789", "2505.21469", "2610.01939")
+#: arXiv id and the version the file name carries: the API answers with the
+#: latest version, and the file's own version decides which date the year is.
+ARXIV_IDS = (
+    ("2306.12983", "v2"),
+    ("2310.16789", "v3"),
+    ("2505.21469", "v4"),
+    ("2610.01939", "v2"),
+)
 
 DOIS = (
     "10.1038/s41467-024-53632-4",
@@ -42,13 +49,48 @@ DOIS = (
     "10.1038/s43588-026-00986-y",
 )
 
-#: Title and first author as printed on page one of the PDF in ~/doc/paper.
+
+@dataclass(slots=True)
+class Local:
+    """What offline extraction supplies for one bibliographic case.
+
+    Title and first author as printed on page one, plus the venue and year the
+    page's own conference header, journal line or XMP gives - the local values a
+    preprint match must not overwrite.
+    """
+
+    title: str
+    author: str
+    venue: str
+    year: int
+    venue_method: str
+    venue_confidence: float
+    year_confidence: float
+
+
+#: The two conference papers in ~/doc/paper, with the layers that identify them.
 BIBLIOGRAPHIC = (
-    (
-        "Towards More Realistic Membership Inference Attacks on Large Diffusion Models",
-        "Jan Dubiński",
+    Local(
+        title=(
+            "Towards More Realistic Membership Inference Attacks on Large "
+            "Diffusion Models"
+        ),
+        author="Jan Dubinski",
+        venue="IEEE Winter Conference on Applications of Computer Vision",
+        year=2024,
+        venue_method="xmp:dc:description",
+        venue_confidence=0.65,
+        year_confidence=0.4,  # from the file name: ..._WACV_2024_paper.pdf
     ),
-    ("Attention Is All You Need", "Ashish Vaswani"),
+    Local(
+        title="Attention Is All You Need",
+        author="Ashish Vaswani",
+        venue="NIPS 2017",
+        year=2017,
+        venue_method="text:conference-footer",
+        venue_confidence=0.65,
+        year_confidence=0.6,
+    ),
 )
 
 
@@ -62,33 +104,60 @@ class Case:
 
 def cases() -> list[Case]:
     found: list[Case] = []
-    for arxiv_id in ARXIV_IDS:
-        record = PaperRecord(path=f"{arxiv_id}.pdf")
+    for arxiv_id, version in ARXIV_IDS:
+        record = PaperRecord(path=f"{arxiv_id}{version}.pdf")
         record.set_field(
             "arxiv_id",
             arxiv_id,
             source="pdf-first-page",
-            method="text:arXiv",
-            confidence=0.7,
+            method="text:arxiv-id",
+            confidence=0.75,
         )
-        found.append(Case(f"arXiv {arxiv_id}", record))
+        record.set_field(
+            "arxiv_version",
+            version,
+            source="pdf-first-page",
+            method="text:arxiv-id",
+            confidence=0.75,
+        )
+        found.append(Case(f"arXiv {arxiv_id}{version}", record))
     for doi in DOIS:
         record = PaperRecord(path=f"{doi.replace('/', '_')}.pdf")
-        record.set_field("doi", doi, source="pdf-info", method="doi", confidence=0.7)
-        found.append(Case(f"DOI {doi}", record))
-    for title, author in BIBLIOGRAPHIC:
-        record = PaperRecord(path=f"{title[:40]}.pdf")
         record.set_field(
-            "title", title, source="pdf-first-page", method="layout", confidence=0.7
+            "doi", doi, source="pdf-info", method="info:doi", confidence=0.7
+        )
+        found.append(Case(f"DOI {doi}", record))
+    for local in BIBLIOGRAPHIC:
+        record = PaperRecord(path=f"{local.title[:40]}.pdf")
+        record.set_field(
+            "title",
+            local.title,
+            source="pdf-first-page",
+            method="layout",
+            confidence=0.7,
         )
         record.set_field(
             "authors",
-            [author],
+            [local.author],
             source="pdf-first-page",
             method="layout",
             confidence=0.6,
         )
-        found.append(Case(f"title {title[:34]}…", record))
+        record.set_field(
+            "venue",
+            local.venue,
+            source="pdf-first-page",
+            method=local.venue_method,
+            confidence=local.venue_confidence,
+        )
+        record.set_field(
+            "year",
+            local.year,
+            source="filename",
+            method="name:year",
+            confidence=local.year_confidence,
+        )
+        found.append(Case(f"title {local.title[:30]}…", record))
     return found
 
 
@@ -128,11 +197,14 @@ def row(case: Case, record: PaperRecord) -> str:
     provenance = record.provenance.get("title")
     provider = provenance.source if provenance else "—"
     title = field(record, "title")
-    if len(title) > 58:
-        title = title[:57] + "…"
+    if len(title) > 52:
+        title = title[:51] + "…"
+    venue = field(record, "venue")
+    if len(venue) > 40:
+        venue = venue[:39] + "…"
     return (
         f"| {case.label} | {provider} | {score_of(record)} | {title} | "
-        f"{field(record, 'authors')} | {field(record, 'year')} | "
+        f"{field(record, 'authors')} | {field(record, 'year')} | {venue} | "
         f"{identifiers(record)} |"
     )
 
@@ -182,8 +254,11 @@ def main(argv: list[str] | None = None) -> int:
         f"cache={cache_dir or 'disabled'}"
     )
     print()
-    print("| case | provider | score | title | first author | year | identifiers |")
-    print("| --- | --- | --- | --- | --- | --- | --- |")
+    print(
+        "| case | provider | score | title | first author | year | venue "
+        "| identifiers |"
+    )
+    print("| --- | --- | --- | --- | --- | --- | --- | --- |")
 
     unresolved: list[str] = []
     lines: list[tuple[Case, PaperRecord]] = []

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/HFoXZks/X+E8gTWN8u/o8fNJzUg</id>
+  <title>arXiv Query: search_query=ti:"Towards More Realistic Membership Inference Attacks on Large Diffusion Models" AND au:"Dubinski"&amp;id_list=&amp;start=0&amp;max_results=5</title>
+  <updated>2026-10-15T17:48:00Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=ti:%22Towards+More+Realistic+Membership+Inference+Attacks+on+Large+Diffusion+Models%22+AND+au:%22Dubinski%22&amp;start=0&amp;max_results=5&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2306.12983v2</id>
+    <title>Towards More Realistic Membership Inference Attacks on Large Diffusion Models</title>
+    <updated>2023-11-16T14:57:58Z</updated>
+    <link href="https://arxiv.org/abs/2306.12983v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.12983v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative diffusion models, including Stable Diffusion and Midjourney, can generate visually appealing, diverse, and high-resolution images for various applications. These models are trained on billions of internet-sourced images, raising significant concerns about the potential unauthorized use of copyright-protected images. In this paper, we examine whether it is possible to determine if a specific image was used in the training set, a problem known in the cybersecurity community and referred to as a membership inference attack. Our focus is on Stable Diffusion, and we address the challenge of designing a fair evaluation framework to answer this membership question. We propose a methodology to establish a fair evaluation setup and apply it to Stable Diffusion, enabling potential extensions to other generative models. Utilizing this evaluation setup, we execute membership attacks (both known and newly introduced). Our research reveals that previously proposed evaluation setups do not provide a full understanding of the effectiveness of membership inference attacks. We conclude that the membership inference attack remains a significant challenge for large diffusion models (often deployed as black-box systems), indicating that related privacy and copyright issues will persist in the foreseeable future.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-06-22T15:41:15Z</published>
+    <arxiv:comment>Accepted at WACV2024</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jan Dubiński</name>
+    </author>
+    <author>
+      <name>Antoni Kowalczuk</name>
+    </author>
+    <author>
+      <name>Stanisław Pawlak</name>
+    </author>
+    <author>
+      <name>Przemysław Rokita</name>
+    </author>
+    <author>
+      <name>Tomasz Trzciński</name>
+    </author>
+    <author>
+      <name>Paweł Morawiecki</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,168 @@
+{
+ "status": "ok",
+ "message": {
+  "items": [
+   {
+    "DOI": "10.1007/978-3-031-84300-6_13",
+    "type": "book-chapter",
+    "title": [
+     "Is Attention All You Need?"
+    ],
+    "container-title": [
+     "From Human Attention to Computational Attention"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025
+      ]
+     ]
+    },
+    "author": [
+     {
+      "ORCID": "https://orcid.org/0000-0001-5519-842X",
+      "authenticated-orcid": false,
+      "given": "Patrick",
+      "family": "Mineault",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Springer Nature Switzerland"
+   },
+   {
+    "DOI": "10.2139/ssrn.4993784",
+    "type": "posted-content",
+    "title": [
+     "Attention Is All You Need: An Analysis Of The Valuation Of Artificial Intelligence Tokens"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024
+      ]
+     ]
+    },
+    "author": [
+     {
+      "ORCID": "https://orcid.org/0000-0002-8470-5723",
+      "authenticated-orcid": true,
+      "given": "Mfon",
+      "family": "Akpan",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Elsevier BV"
+   },
+   {
+    "DOI": "10.2139/ssrn.5967774",
+    "type": "posted-content",
+    "title": [
+     "Attention is All You Need... Unless You Are a CISO: The Inherent Incompatibility Between Transformer Architectures and Zero-Trust Environments"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Giuseppe",
+      "family": "Canale",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Elsevier BV"
+   },
+   {
+    "DOI": "10.5040/9781350101272.00000005",
+    "type": "other",
+    "title": [
+     "All You Need Is LSD"
+    ],
+    "container-title": [
+     "All You Need Is LSD"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2018
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Leo",
+      "family": "Butler",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Bloomsbury Methuen Drama"
+   },
+   {
+    "DOI": "10.21203/rs.3.rs-10916252/v1",
+    "type": "posted-content",
+    "title": [
+     "One Vector Is All You Need for O(1) Self-Attention: The Ocean State"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026,
+       9,
+       4
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "SHUYUAN",
+      "family": "YU",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Shanghai ATOZ Information Technology Co., Ltd."
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Springer Science and Business Media LLC"
+   }
+  ]
+ }
+}

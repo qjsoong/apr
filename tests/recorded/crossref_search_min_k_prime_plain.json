@@ -1,0 +1,359 @@
+{
+ "status": "ok",
+ "message": {
+  "items": [
+   {
+    "DOI": "10.18653/v1/2024.findings-acl.35",
+    "type": "proceedings-article",
+    "title": [
+     "DPDLLM: A Black-box Framework for Detecting Pre-training Data from Large Language Models"
+    ],
+    "container-title": [
+     "Findings of the Association for Computational Linguistics ACL 2024"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Baohang",
+      "family": "Zhou",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Zezhong",
+      "family": "Wang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Lingzhi",
+      "family": "Wang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Hongru",
+      "family": "Wang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Ying",
+      "family": "Zhang",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Kehui",
+      "family": "Song",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Xuhui",
+      "family": "Sui",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Kam-Fai",
+      "family": "Wong",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Association for Computational Linguistics"
+   },
+   {
+    "DOI": "10.18653/v1/2024.inlg-main.14",
+    "type": "proceedings-article",
+    "title": [
+     "Quantifying Memorization and Detecting Training Data of Pre-trained Language Models using Japanese Newspaper"
+    ],
+    "container-title": [
+     "Proceedings of the 17th International Natural Language Generation Conference"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Shotaro",
+      "family": "Ishihara",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Hiromu",
+      "family": "Takahashi",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Association for Computational Linguistics"
+   },
+   {
+    "DOI": "10.18653/v1/2026.findings-acl.653",
+    "type": "proceedings-article",
+    "title": [
+     "Detecting Sensitive Personal Information in Japanese Pre-Training Corpora for Large Language Models"
+    ],
+    "container-title": [
+     "Findings of the Association for Computational Linguistics: ACL 2026"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Rei",
+      "family": "Minamoto",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Yusuke",
+      "family": "Oda",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Daisuke",
+      "family": "Kawahara",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "Association for Computational Linguistics"
+   },
+   {
+    "DOI": "10.18653/v1/2025.findings-emnlp.610",
+    "type": "proceedings-article",
+    "title": [
+     "An Improved, Strong Baseline for Pre-Trained Large Language Models as Task-Oriented Dialogue Systems"
+    ],
+    "container-title": [
+     "Findings of the Association for Computational Linguistics: EMNLP 2025"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Sebastian",
+      "family": "Steindl",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "André",
+      "family": "Kestler",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Ulrich",
+      "family": "Schäfer",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Bernd",
+      "family": "Ludwig",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Association for Computational Linguistics"
+   },
+   {
+    "DOI": "10.5220/0013094800003899",
+    "type": "proceedings-article",
+    "title": [
+     "CyLLM-DAP: Cybersecurity Domain-Adaptive Pre-Training Framework of Large Language Models"
+    ],
+    "container-title": [
+     "Proceedings of the 11th International Conference on Information Systems Security and Privacy"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Khang",
+      "family": "Mai",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Japan Advanced Institute of Science and Technology (JAIST), Ishikawa, Japan"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Razvan",
+      "family": "Beuran",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Japan Advanced Institute of Science and Technology (JAIST), Ishikawa, Japan"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Naoya",
+      "family": "Inoue",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Japan Advanced Institute of Science and Technology (JAIST), Ishikawa, Japan"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "SCITEPRESS - Science and Technology Publications"
+   }
+  ]
+ }
+}

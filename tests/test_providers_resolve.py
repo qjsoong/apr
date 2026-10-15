@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from apr.match import CROSS_CHECK_THRESHOLD, title_score
+from apr.match import CONFIDENT_MATCH, CROSS_CHECK_THRESHOLD, title_score
 from apr.model import (
     SOURCE_ERROR,
     SOURCE_NOT_FOUND,
@@ -23,7 +23,7 @@ from apr.model import (
     SOURCE_SKIPPED,
     PaperRecord,
 )
-from apr.providers import HttpOptions, http, resolve
+from apr.providers import HttpOptions, crossref, http, resolve
 
 RECORDED = Path(__file__).parent / "recorded"
 
@@ -391,25 +391,147 @@ def test_the_search_picks_the_right_candidate_and_ignores_the_near_misses(
         assert near_miss not in json.dumps(record.to_dict())
 
 
-def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
-    """A paraphrase scores between the gate and the confident bar."""
-    online.file("api.crossref.org/works?", "crossref_search_membership_inference.json")
-    online.text("export.arxiv.org/api/query?", recorded("arxiv_search_attention.xml"))
-    online.file("api.openalex.org/works?", "openalex_search_attention.json")
-    online.file("api.semanticscholar.org", "semanticscholar_match_attention.json")
+def test_the_plain_title_query_finds_the_wacv_record(online: Online) -> None:
+    """Crossref has the paper; the plain-title query is what finds it.
+
+    The old contract narrowed that first query with the first author, which is
+    what lost this record; the new one asks the plain title with five rows and
+    no date filter, and only narrows when nothing acceptable comes back.
+    """
+    online.file(
+        "api.crossref.org/works?", "crossref_search_membership_inference_plain.json"
+    )
     record = local_record(
-        title=("Membership Inference Attacks on Large Diffusion Models", 0.5)
+        title=(MEMBERSHIP_TITLE, 0.8),
+        authors=(["Jan Dubinski"], 0.7),
+        year=(2024, 0.4),
+        venue=("IEEE Winter Conference on Applications of Computer Vision", 0.65),
     )
 
     resolve(record)
 
+    assert record.doi == "10.1109/wacv57701.2024.00479"
+    assert record.year == 2024
+    assert record.provenance["title"].confidence == 1.0
+    # The exact request is in the source log, with no author and no date filter.
+    attempt = record.sources[0]
+    assert attempt.query == f"query.bibliographic={MEMBERSHIP_TITLE}"
+    assert attempt.url == crossref.bibliography_url(MEMBERSHIP_TITLE)
+    assert "query.author" not in (attempt.url or "")
+    assert "filter" not in (attempt.url or "")
+    assert "rows=5" in (attempt.url or "")
+    assert len(online.urls) == 1
+
+
+def test_crossref_falls_back_to_the_author_then_the_first_words(
+    online: Online,
+) -> None:
+    """Nothing acceptable for the plain title, so the query is narrowed.
+
+    The first retry adds the first author's surname to the same query string -
+    not the old ``query.author`` parameter, and still with no date filter.
+    """
+    online.file("Dubi%C5%84ski", "crossref_search_membership_inference.json")
+    online.file(
+        "query.bibliographic=Membership+Inference", "crossref_search_empty.json"
+    )
+    title = "Membership Inference Attacks on Large Diffusion Models"
+    record = local_record(title=(title, 0.8), authors=(["Jan Dubiński"], 0.7))
+
+    resolve(record)
+
+    assert online.urls[0] == crossref.bibliography_url(title)
+    assert online.urls[1] == crossref.bibliography_url(f"{title} Dubiński")
+    assert "query.author" not in online.urls[1]
+    assert "filter" not in online.urls[1]
+    assert sources(record) == [
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_OK),
+    ]
+    assert record.doi == "10.1109/wacv57701.2024.00479"
+    assert record.sources[0].url == online.urls[0]
+    assert record.sources[1].url == online.urls[1]
+
+
+def test_the_crossref_queries_narrow_from_the_title_to_the_author_to_six_words(
+    online: Online,
+) -> None:
+    """The three queries in order, each with its exact URL recorded.
+
+    The Min-K%++ paper is not in Crossref, so all three come back with unrelated
+    works and are turned down before the arXiv search identifies the paper.
+    """
+    title = (
+        "Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large "
+        "Language Models"
+    )
+    # Registered most specific first: the author and six-word retries before the
+    # plain title, because each URL contains the one before it.
+    online.file("+Zhang&rows=5", "crossref_search_min_k_prime_author.json")
+    online.file("+Pre-Training&rows=5", "crossref_search_min_k_prime_words.json")
+    online.file("query.bibliographic=", "crossref_search_min_k_prime_plain.json")
+    online.file("export.arxiv.org/api/query", "arxiv_search_min_k_prime.xml")
+    record = local_record(title=(title, 0.8), authors=(["Jingyang Zhang"], 0.7))
+
+    resolve(record)
+
+    six_words = " ".join(title.split()[:6])
+    assert [attempt.query for attempt in record.sources[:3]] == [
+        f"query.bibliographic={title}",
+        f"query.bibliographic={title} Zhang",
+        f"query.bibliographic={six_words}",
+    ]
+    assert [attempt.url for attempt in record.sources[:3]] == [
+        crossref.bibliography_url(title),
+        crossref.bibliography_url(f"{title} Zhang"),
+        crossref.bibliography_url(six_words),
+    ]
+    assert all(
+        "filter" not in (attempt.url or "")
+        and "query.author" not in (attempt.url or "")
+        for attempt in record.sources[:3]
+    )
+    assert sources(record)[:3] == [
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+    ]
+    assert sources(record)[3] == ("arxiv", SOURCE_OK)  # the preprint identifies it
+
+
+def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
+    """A paraphrase scores between the gate and the confident bar.
+
+    The two bars are part of the contract and the scoring changes (year
+    proximity, published over posted) must not move them: 0.60 to count at all,
+    0.85 to count as confident. A candidate between the two is still offered,
+    and the warning names the source and the score.
+    """
+    online.file(
+        "api.crossref.org/works?", "crossref_search_membership_inference_plain.json"
+    )
+    online.text(
+        "export.arxiv.org/api/query",
+        "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'/>",
+    )
+    online.json("api.openalex.org/works?", {"results": []})
+    online.json("api.semanticscholar.org", {"data": []})
+    local = "Membership Inference Attacks on Large Diffusion"
+    record = local_record(title=(local, 0.5))
+
+    resolve(record)
+
+    # A six-word title is the whole title, so Crossref is asked once.
+    score = title_score(local, MEMBERSHIP_TITLE)
+    assert 0.6 <= score < CONFIDENT_MATCH
     assert record.title == MEMBERSHIP_TITLE
     title = record.provenance["title"]
     assert title.source == "crossref"
-    assert title.confidence == pytest.approx(0.881, abs=0.01)
-    assert len(record.warnings) == 1
-    assert "crossref" in record.warnings[0]
-    assert "0.76" in record.warnings[0]
+    assert title.confidence == pytest.approx(0.5 + 0.5 * score)
+    assert record.warnings == [
+        f"crossref matched at {score:.2f} (below {CONFIDENT_MATCH}); "
+        "check the title, authors and identifiers"
+    ]
     # The cross-check watches identifiers only; a search hit is judged by score.
     assert "stale identifier" not in record.warnings[0]
     assert sources(record) == [
@@ -423,7 +545,12 @@ def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
 def test_a_search_with_only_unrelated_candidates_leaves_the_record_alone(
     online: Online,
 ) -> None:
-    online.json("api.crossref.org/works?", {"message": {"items": []}})
+    """Every candidate scores under the 0.60 gate: nothing may be contributed.
+
+    Not one field changes, every attempt is recorded as not-found, and the only
+    entries in the evidence log stay the ones extraction made.
+    """
+    online.file("api.crossref.org/works?", "crossref_search_min_k_prime_plain.json")
     online.text(
         "export.arxiv.org/api/query",
         "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'/>",
@@ -443,29 +570,234 @@ def test_a_search_with_only_unrelated_candidates_leaves_the_record_alone(
     assert record.year is None
     assert record.provenance["title"].source == "pdf-first-page"
     assert record.warnings == []
+    # Nothing but extraction ever offered a value: the gate held for every
+    # candidate, so not even a rejected value reached the evidence log.
+    assert {item.source for item in record.evidence} == {"pdf-first-page"}
+    # The plain title, the title with the first author, then its first six
+    # words: all three answered with unrelated works, so all three were turned
+    # down and the other providers were asked as well.
     assert sources(record) == [
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
         ("crossref", SOURCE_NOT_FOUND),
         ("arxiv", SOURCE_NOT_FOUND),
         ("openalex", SOURCE_NOT_FOUND),
         ("semanticscholar", SOURCE_NOT_FOUND),
     ]
-    assert record.sources[0].candidates == 0
-    assert record.sources[2].candidates == 5
-    assert record.sources[3].candidates == 1
+    assert [attempt.candidates for attempt in record.sources] == [5, 5, 5, 0, 5, 1]
 
 
-def test_the_search_query_carries_the_title_and_the_first_author(
+def test_a_preprint_does_not_override_the_venue_and_year_of_an_iclr_paper(
     online: Online,
 ) -> None:
-    online.file("api.crossref.org/works?", "crossref_search_membership_inference.json")
+    """The PDF prints "Published as a conference paper at ICLR 2025".
+
+    The arXiv preprint says 2024 and arXiv; neither may take the paper's own
+    venue and year, and both disagreements are reported.
+    """
+    title = (
+        "Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large "
+        "Language Models"
+    )
+    online.file(
+        "crossref.org/works?query.bibliographic=MIN-K",
+        "crossref_search_min_k_prime_plain.json",
+    )
+    online.file(
+        "crossref.org/works?query.bibliographic=MIN-K%25%2B%25",
+        "crossref_search_min_k_prime_words.json",
+    )
+    online.file(
+        "crossref.org/works?query.bibliographic=",
+        "crossref_search_min_k_prime_author.json",
+    )
+    online.file("export.arxiv.org/api/query", "arxiv_search_min_k_prime.xml")
     record = local_record(
-        title=(MEMBERSHIP_TITLE, 0.8), authors=(["Jan Dubiński"], 0.7)
+        title=(title, 0.8),
+        authors=(["Jingyang Zhang"], 0.7),
+        venue=("ICLR 2025", 0.7),
+        year=(2025, 0.7),
     )
 
     resolve(record)
 
-    assert "query.bibliographic=" in online.urls[0]
-    assert "query.author=Dubi%C5%84ski" in online.urls[0]
+    assert record.venue == "ICLR 2025"
+    assert record.year == 2025
+    assert record.provenance["venue"].source == "pdf-first-page"
+    assert record.provenance["year"].source == "pdf-first-page"
+    assert record.arxiv_id == "2404.02936"  # the preprint still identifies the paper
+    assert record.warnings == [
+        "local venue suggests ICLR 2025; the matched record is a 2024 preprint",
+        "local year 2025 disagrees with the 2024 preprint record",
+    ]
+    assert sources(record) == [
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+        ("arxiv", SOURCE_OK),
+    ]
+
+
+def test_a_preprint_does_not_override_a_year_taken_from_the_file_name(
+    online: Online,
+) -> None:
+    """The WACV file is named ..._WACV_2024_...; the preprint is from 2023."""
+    online.file("api.crossref.org/works?", "crossref_search_empty.json")
+    online.text(
+        "export.arxiv.org/api/query",
+        recorded("arxiv_search_membership_inference.xml"),
+    )
+    record = local_record(
+        title=(MEMBERSHIP_TITLE, 0.8),
+        authors=(["Jan Dubinski"], 0.7),
+        year=(2024, 0.4),
+        venue=("IEEE Winter Conference on Applications of Computer Vision", 0.65),
+    )
+
+    resolve(record)
+
+    assert record.year == 2024
+    assert record.venue == "IEEE Winter Conference on Applications of Computer Vision"
+    assert record.arxiv_id == "2306.12983"
+    assert record.warnings == [
+        "local venue suggests IEEE Winter Conference on Applications of Computer "
+        "Vision; the matched record is a 2023 preprint",
+        "local year 2024 disagrees with the 2023 preprint record",
+    ]
+
+
+def test_a_record_years_away_does_not_take_the_local_year(online: Online) -> None:
+    """A 2025 posting of the 2017 paper may identify it, never re-date it."""
+    online.file("api.crossref.org/works/", "crossref_doi_10.65215_ysbyhc05.json")
+    record = local_record(
+        title=("Attention Is All You Need", 0.8),
+        authors=(["Ashish Vaswani"], 0.6),
+        year=(2017, 0.6),
+        venue=("NIPS 2017", 0.65),
+        doi=("10.65215/ysbyhc05", 0.6),
+    )
+
+    resolve(record)
+
+    assert record.year == 2017
+    assert record.venue == "NIPS 2017"
+    assert record.title == "Attention Is All You Need"
+    assert record.warnings == [
+        "local year 2017 disagrees with the 2025 preprint record"
+    ]
+    assert record.sources[0].query == "doi:10.65215/ysbyhc05"
+
+
+def test_a_record_years_away_may_identify_the_paper_but_not_its_venue(
+    online: Online,
+) -> None:
+    """A 2025 book chapter that merely shares the title keeps nothing else.
+
+    The recorded answer for the plain title is a book chapter five words long,
+    scored 0.61 against the 2017 paper: barely a match, and years away from the
+    year the PDF prints. It may say which paper this is; its year, its venue and
+    its DOI belong to that other edition.
+    """
+    online.file("api.crossref.org/works?", "crossref_search_attention_plain.json")
+    online.text(
+        "export.arxiv.org/api/query",
+        "<?xml version='1.0'?><feed xmlns='http://www.w3.org/2005/Atom'/>",
+    )
+    online.json("api.openalex.org/works?", {"results": []})
+    online.json("api.semanticscholar.org", {"data": []})
+    record = local_record(
+        title=("Attention Is All You Need", 0.8),
+        authors=(["Ashish Vaswani"], 0.6),
+        year=(2017, 0.6),
+        venue=("NIPS 2017", 0.65),
+    )
+
+    resolve(record)
+
+    assert record.venue == "NIPS 2017"
+    assert record.doi is None
+    assert record.url is None
+    assert record.year == 2017
+    assert any(
+        "local year 2017 disagrees with the 2025 record" in warning
+        for warning in record.warnings
+    )
+
+
+def test_a_published_record_wins_over_a_mirror_at_the_same_score(
+    online: Online,
+) -> None:
+    """Built from the recorded mirror: the same paper, posted and published.
+
+    Crossref holds no published record of the 2017 paper, so the pair is the
+    recorded mirror plus a copy of it declared a proceedings article. Both are
+    dated 2017 - the year the PDF prints - so the year guard stays out of the
+    way and only the preference between a posting and a published record
+    decides which one contributes.
+    """
+    mirror = json.loads(recorded("crossref_doi_10.65215_ysbyhc05.json"))["message"]
+    same_year = {**mirror, "issued": {"date-parts": [[2017]]}}
+    posted = {**same_year, "type": "posted-content", "container-title": []}
+    published = {
+        **same_year,
+        "type": "proceedings-article",
+        "container-title": ["Advances in Neural Information Processing Systems"],
+    }
+    online.json(
+        "api.crossref.org/works?query.bibliographic",
+        {"status": "ok", "message": {"items": [posted, published]}},
+    )
+    record = local_record(
+        title=("Attention Is All You Need", 0.8),
+        authors=(["Ashish Vaswani"], 0.6),
+        year=(2017, 0.6),
+    )
+
+    resolve(record)
+
+    assert record.venue == "Advances in Neural Information Processing Systems"
+    assert record.doi == "10.65215/ysbyhc05"
+    assert record.year == 2017
+    assert record.warnings == []
+
+
+def test_an_older_file_version_keeps_the_first_version_year_and_says_so(
+    online: Online,
+) -> None:
+    """arXiv answers with the latest version; the file names an older one."""
+    online.file(
+        "export.arxiv.org/api/query?id_list=2310.16789", "arxiv_id_2310.16789.xml"
+    )
+    older = local_record(
+        arxiv_id=("2310.16789", 0.75),
+        arxiv_version=("v2", 0.75),
+    )
+
+    resolve(older)
+
+    assert older.arxiv_version == "v3"  # what arXiv now reports as the latest
+    assert older.year == 2023  # the first version's year, not the v3 year
+    assert older.warnings == [
+        "the file is version v2 but arXiv reports v3 as the latest; "
+        "the year is the first version's"
+    ]
+
+
+def test_the_latest_file_version_takes_the_year_of_that_version(
+    online: Online,
+) -> None:
+    online.file(
+        "export.arxiv.org/api/query?id_list=2310.16789", "arxiv_id_2310.16789.xml"
+    )
+    latest = local_record(
+        arxiv_id=("2310.16789", 0.75),
+        arxiv_version=("v3", 0.75),
+    )
+
+    resolve(latest)
+
+    assert latest.year == 2024  # <updated>, the version the file holds
+    assert latest.warnings == []
 
 
 # -- nothing to do, and failures -------------------------------------------

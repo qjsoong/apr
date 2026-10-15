@@ -9,17 +9,24 @@ import pytest
 
 from apr.match import (
     AUTHOR_WEIGHT,
+    COMPARABLE_SCORE,
+    CONFIDENT_MATCH,
     CROSS_CHECK_THRESHOLD,
+    MATCH_THRESHOLD,
     TITLE_WEIGHT,
     YEAR_WEIGHT,
     Candidate,
     abstract_from_inverted_index,
     author_score,
+    best_candidate,
     canonical_url,
     cross_check,
+    invert_name,
+    normalise_arxiv_version,
     normalise_doi,
     normalise_title,
     parse_arxiv_id,
+    preference,
     score_candidate,
     strip_markup,
     surname,
@@ -83,6 +90,15 @@ def test_parse_arxiv_id(value: object, expected: tuple[str, str | None] | None) 
     assert parse_arxiv_id(value) == expected
 
 
+def test_normalise_arxiv_version_accepts_the_forms_extraction_produces() -> None:
+    assert normalise_arxiv_version("v3") == "v3"
+    assert normalise_arxiv_version("V3") == "v3"
+    assert normalise_arxiv_version(" 3 ") == "v3"
+    assert normalise_arxiv_version("v") is None
+    assert normalise_arxiv_version("latest") is None
+    assert normalise_arxiv_version(None) is None
+
+
 def test_canonical_url_prefers_arxiv_and_keeps_the_version() -> None:
     assert (
         canonical_url(doi=None, arxiv_id="2610.01939", version="v2")
@@ -136,6 +152,32 @@ def test_title_score_keeps_a_near_miss_below_the_confident_bar() -> None:
         authors=["Ashish Vaswani"],
     )
     assert mismatch < 0.6
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        # OpenAlex, Crossref and DataCite all mix these two orders in one list.
+        ("Zeng, Cheng", "Cheng Zeng"),
+        ("Ambrose, Connor", "Connor Ambrose"),
+        ("Dubiński, Jan", "Jan Dubiński"),
+        ("Döbeli Honegger, Beat", "Beat Döbeli Honegger"),
+        ("van der Berg, Jan", "Jan van der Berg"),
+        ("Jirui Jin", "Jirui Jin"),
+        ("Ashish Vaswani", "Ashish Vaswani"),
+        # A suffix is not a given name, and neither is an empty head.
+        ("Smith, John, Jr.", "Smith, John, Jr."),
+        ("Smith, John, Sr.", "Smith, John, Sr."),
+        ("Smith, John, III", "Smith, John, III"),
+        (", Jan", ", Jan"),
+        ("Smith, John II", "John II Smith"),
+        (None, ""),
+    ],
+)
+def test_invert_name_turns_around_only_a_given_name(
+    value: object, expected: str
+) -> None:
+    assert invert_name(value) == expected
 
 
 def test_surname_is_read_as_printed_for_a_query() -> None:
@@ -305,6 +347,94 @@ def test_cross_check_is_capped_by_the_author_list() -> None:
         )
         == 0.0
     )
+
+
+def test_the_two_gates_did_not_move() -> None:
+    """The bars are the contract; scoring changes must not shift them.
+
+    The year now carries more weight and a published record can beat a posting,
+    neither of which may change when a candidate counts at all (0.60) or when a
+    match is confident enough to stop looking (0.85). This test is here so the
+    next weight change has to face the question.
+    """
+    assert MATCH_THRESHOLD == 0.60
+    assert CONFIDENT_MATCH == 0.85
+    assert MATCH_THRESHOLD < CONFIDENT_MATCH
+    assert pytest.approx(1.0) == TITLE_WEIGHT + AUTHOR_WEIGHT + YEAR_WEIGHT
+
+
+def test_a_perfect_title_years_away_cannot_look_confident() -> None:
+    """Same title and authors, but the record is of another year: not a match.
+
+    A mirror of the 2017 paper is issued in 2025; the year the PDF prints is
+    part of the evidence, so that record cannot reach the confident bar.
+    """
+    candidate = Candidate(
+        title="Attention Is All You Need",
+        authors=["Ashish Vaswani", "Noam Shazeer"],
+        year=2025,
+    )
+    score = score_candidate(
+        candidate,
+        title="Attention Is All You Need",
+        authors=["Ashish Vaswani", "Noam Shazeer"],
+        year=2017,
+    )
+
+    assert score == pytest.approx(TITLE_WEIGHT + AUTHOR_WEIGHT)
+    assert score < CONFIDENT_MATCH
+    assert score < 0.9
+    # The same record with the right year is a perfect match.
+    assert (
+        score_candidate(
+            candidate,
+            title="Attention Is All You Need",
+            authors=["Ashish Vaswani", "Noam Shazeer"],
+            year=2025,
+        )
+        == 1.0
+    )
+
+
+def test_preference_prefers_a_published_record_and_a_doi() -> None:
+    published_with_doi = Candidate(doi="10.1/x", type="proceedings-article")
+    published_without = Candidate(type="journal-article")
+    posted_with_doi = Candidate(doi="10.1/y", type="posted-content")
+    posted_without = Candidate(type="preprint")
+
+    assert preference(published_with_doi) > preference(published_without)
+    assert preference(published_without) > preference(posted_with_doi)
+    assert preference(posted_with_doi) > preference(posted_without)
+    assert posted_with_doi.is_preprint and published_with_doi.is_preprint is False
+
+
+def test_best_candidate_breaks_a_tie_towards_the_published_record() -> None:
+    mirror = Candidate(
+        title="Attention Is All You Need", doi="10.1/mirror", type="posted-content"
+    )
+    proceedings = Candidate(
+        title="Attention Is All You Need",
+        doi="10.1/proceedings",
+        type="proceedings-article",
+    )
+
+    score, chosen = best_candidate([(1.0, mirror), (1.0, proceedings)])
+
+    assert score == 1.0
+    assert chosen is proceedings
+
+
+def test_best_candidate_keeps_a_clearly_better_match() -> None:
+    """Only near-equal scores are reordered."""
+    better = Candidate(title="Attention Is All You Need", type="posted-content")
+    worse = Candidate(
+        title="Attention Is All You Need", doi="10.1/x", type="journal-article"
+    )
+
+    score, chosen = best_candidate([(1.0, better), (1.0 - COMPARABLE_SCORE * 2, worse)])
+
+    assert score == 1.0
+    assert chosen is better
 
 
 def test_abstract_from_inverted_index_rebuilds_word_order() -> None:

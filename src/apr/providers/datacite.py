@@ -52,7 +52,15 @@ def _from_attributes(attributes: Any) -> Candidate | None:
         doi=doi,
         url=canonical_url(doi=doi),
         abstract=_abstract(attributes.get("descriptions")),
+        type=_type(attributes),
     )
+
+
+def _type(attributes: dict[str, Any]) -> str | None:
+    """DataCite's general resource type, e.g. ``Text`` or ``Preprint``."""
+    types = attributes.get("types")
+    value = types.get("resourceTypeGeneral") if isinstance(types, dict) else None
+    return value.strip().lower() if isinstance(value, str) and value.strip() else None
 
 
 def _title(titles: Any) -> str | None:
