@@ -231,6 +231,13 @@ def test_crossref_by_doi_returns_nothing_for_an_unknown_doi(server: Server) -> N
 
 
 def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> None:
+    """One query string, five rows, and nothing else narrowing it.
+
+    This replaced the old contract, which sent the first author alongside the
+    title as a separate ``query.author`` parameter. Since the bibliographic
+    search started losing records Crossref holds, the plain title goes first
+    and the author is only added if that finds nothing acceptable.
+    """
     server.serve("crossref_search_membership_inference_plain.json")
 
     candidates = crossref.search(
@@ -247,6 +254,8 @@ def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> Non
         "rows": ["5"],
         "mailto": ["me@example.com"],
     }
+    assert "filter" not in server.last_url  # no date or type filter, ever
+    assert "query.author" not in server.last_url
     assert candidates[0].doi == "10.1109/wacv57701.2024.00479"
     assert candidates[0].type == "proceedings-article"
     assert candidates[0].title == (
@@ -262,7 +271,11 @@ def test_crossref_search_asks_for_five_bibliographic_rows(server: Server) -> Non
 def test_crossref_search_url_carries_no_filter_and_no_author(
     server: Server,
 ) -> None:
-    """The query is the caller's text; nothing narrows it behind their back."""
+    """The query is the caller's text; nothing narrows it behind their back.
+
+    The old contract put the first author in ``query.author``; the new one
+    carries a plain title and leaves the narrowing to the caller's retries.
+    """
     url = crossref.bibliography_url("a plain title", mailto="me@example.com")
 
     assert url == (

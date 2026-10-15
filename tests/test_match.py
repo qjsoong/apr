@@ -12,6 +12,7 @@ from apr.match import (
     COMPARABLE_SCORE,
     CONFIDENT_MATCH,
     CROSS_CHECK_THRESHOLD,
+    MATCH_THRESHOLD,
     TITLE_WEIGHT,
     YEAR_WEIGHT,
     Candidate,
@@ -346,6 +347,20 @@ def test_cross_check_is_capped_by_the_author_list() -> None:
         )
         == 0.0
     )
+
+
+def test_the_two_gates_did_not_move() -> None:
+    """The bars are the contract; scoring changes must not shift them.
+
+    The year now carries more weight and a published record can beat a posting,
+    neither of which may change when a candidate counts at all (0.60) or when a
+    match is confident enough to stop looking (0.85). This test is here so the
+    next weight change has to face the question.
+    """
+    assert MATCH_THRESHOLD == 0.60
+    assert CONFIDENT_MATCH == 0.85
+    assert MATCH_THRESHOLD < CONFIDENT_MATCH
+    assert pytest.approx(1.0) == TITLE_WEIGHT + AUTHOR_WEIGHT + YEAR_WEIGHT
 
 
 def test_a_perfect_title_years_away_cannot_look_confident() -> None:

@@ -392,7 +392,12 @@ def test_the_search_picks_the_right_candidate_and_ignores_the_near_misses(
 
 
 def test_the_plain_title_query_finds_the_wacv_record(online: Online) -> None:
-    """Crossref has the paper; the plain-title query is what finds it."""
+    """Crossref has the paper; the plain-title query is what finds it.
+
+    The old contract narrowed that first query with the first author, which is
+    what lost this record; the new one asks the plain title with five rows and
+    no date filter, and only narrows when nothing acceptable comes back.
+    """
     online.file(
         "api.crossref.org/works?", "crossref_search_membership_inference_plain.json"
     )
@@ -421,22 +426,24 @@ def test_the_plain_title_query_finds_the_wacv_record(online: Online) -> None:
 def test_crossref_falls_back_to_the_author_then_the_first_words(
     online: Online,
 ) -> None:
-    """Nothing acceptable for the plain title, so the query is narrowed."""
+    """Nothing acceptable for the plain title, so the query is narrowed.
+
+    The first retry adds the first author's surname to the same query string -
+    not the old ``query.author`` parameter, and still with no date filter.
+    """
     online.file("Dubi%C5%84ski", "crossref_search_membership_inference.json")
     online.file(
         "query.bibliographic=Membership+Inference", "crossref_search_empty.json"
     )
-    record = local_record(
-        title=("Membership Inference Attacks on Large Diffusion Models", 0.8),
-        authors=(["Jan Dubiński"], 0.7),
-    )
+    title = "Membership Inference Attacks on Large Diffusion Models"
+    record = local_record(title=(title, 0.8), authors=(["Jan Dubiński"], 0.7))
 
     resolve(record)
 
-    assert online.urls[0] == crossref.bibliography_url(
-        "Membership Inference Attacks on Large Diffusion Models"
-    )
-    assert "Dubi%C5%84ski" in online.urls[1]
+    assert online.urls[0] == crossref.bibliography_url(title)
+    assert online.urls[1] == crossref.bibliography_url(f"{title} Dubiński")
+    assert "query.author" not in online.urls[1]
+    assert "filter" not in online.urls[1]
     assert sources(record) == [
         ("crossref", SOURCE_NOT_FOUND),
         ("crossref", SOURCE_OK),
@@ -446,8 +453,60 @@ def test_crossref_falls_back_to_the_author_then_the_first_words(
     assert record.sources[1].url == online.urls[1]
 
 
+def test_the_crossref_queries_narrow_from_the_title_to_the_author_to_six_words(
+    online: Online,
+) -> None:
+    """The three queries in order, each with its exact URL recorded.
+
+    The Min-K%++ paper is not in Crossref, so all three come back with unrelated
+    works and are turned down before the arXiv search identifies the paper.
+    """
+    title = (
+        "Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large "
+        "Language Models"
+    )
+    # Registered most specific first: the author and six-word retries before the
+    # plain title, because each URL contains the one before it.
+    online.file("+Zhang&rows=5", "crossref_search_min_k_prime_author.json")
+    online.file("+Pre-Training&rows=5", "crossref_search_min_k_prime_words.json")
+    online.file("query.bibliographic=", "crossref_search_min_k_prime_plain.json")
+    online.file("export.arxiv.org/api/query", "arxiv_search_min_k_prime.xml")
+    record = local_record(title=(title, 0.8), authors=(["Jingyang Zhang"], 0.7))
+
+    resolve(record)
+
+    six_words = " ".join(title.split()[:6])
+    assert [attempt.query for attempt in record.sources[:3]] == [
+        f"query.bibliographic={title}",
+        f"query.bibliographic={title} Zhang",
+        f"query.bibliographic={six_words}",
+    ]
+    assert [attempt.url for attempt in record.sources[:3]] == [
+        crossref.bibliography_url(title),
+        crossref.bibliography_url(f"{title} Zhang"),
+        crossref.bibliography_url(six_words),
+    ]
+    assert all(
+        "filter" not in (attempt.url or "")
+        and "query.author" not in (attempt.url or "")
+        for attempt in record.sources[:3]
+    )
+    assert sources(record)[:3] == [
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+        ("crossref", SOURCE_NOT_FOUND),
+    ]
+    assert sources(record)[3] == ("arxiv", SOURCE_OK)  # the preprint identifies it
+
+
 def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
-    """A paraphrase scores between the gate and the confident bar."""
+    """A paraphrase scores between the gate and the confident bar.
+
+    The two bars are part of the contract and the scoring changes (year
+    proximity, published over posted) must not move them: 0.60 to count at all,
+    0.85 to count as confident. A candidate between the two is still offered,
+    and the warning names the source and the score.
+    """
     online.file(
         "api.crossref.org/works?", "crossref_search_membership_inference_plain.json"
     )
@@ -486,6 +545,11 @@ def test_a_weak_match_is_offered_with_a_warning(online: Online) -> None:
 def test_a_search_with_only_unrelated_candidates_leaves_the_record_alone(
     online: Online,
 ) -> None:
+    """Every candidate scores under the 0.60 gate: nothing may be contributed.
+
+    Not one field changes, every attempt is recorded as not-found, and the only
+    entries in the evidence log stay the ones extraction made.
+    """
     online.file("api.crossref.org/works?", "crossref_search_min_k_prime_plain.json")
     online.text(
         "export.arxiv.org/api/query",
@@ -506,6 +570,9 @@ def test_a_search_with_only_unrelated_candidates_leaves_the_record_alone(
     assert record.year is None
     assert record.provenance["title"].source == "pdf-first-page"
     assert record.warnings == []
+    # Nothing but extraction ever offered a value: the gate held for every
+    # candidate, so not even a rejected value reached the evidence log.
+    assert {item.source for item in record.evidence} == {"pdf-first-page"}
     # The plain title, the title with the first author, then its first six
     # words: all three answered with unrelated works, so all three were turned
     # down and the other providers were asked as well.
