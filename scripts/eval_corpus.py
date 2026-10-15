@@ -95,11 +95,33 @@ def run_apr(
         return None, f"invalid JSON: {exc}", elapsed
 
 
+def title_match(expected: dict, value: str | None) -> tuple[bool, str | None]:
+    """Does the title match the authority's wording, or a documented alternate?
+
+    Returns (matched, source of the alternate). A match on the primary wording
+    returns (True, None). An alternate exists for the rare case where two
+    authorities print the same paper's title differently - the same paper is
+    still identified - and each one is recorded with the URL that prints it.
+    """
+    target = normalise(value)
+    if not target:
+        return False, None
+    if normalise(expected["title"]) == target:
+        return True, None
+    for source, alternate in (expected.get("title_alternates") or {}).items():
+        if normalise(alternate) == target:
+            return True, source
+    return False, None
+
+
 def compare(expected: dict, actual: dict | None) -> dict:
+    matched, matched_via = title_match(expected, (actual or {}).get("title"))
     if actual is None:
         return {
             "title_nonempty": False,
             "title_exact": False,
+            "title_exact_ignoring_spaces": False,
+            "matched_via": None,
             "title_similarity": 0.0,
             "author_surname": False,
             "doi_exact": False,
@@ -112,9 +134,10 @@ def compare(expected: dict, actual: dict | None) -> dict:
     known_arxiv = expected.get("arxiv_id")
     return {
         "title_nonempty": bool(actual.get("title")),
-        "title_exact": normalise(actual.get("title")) == normalise(expected["title"]),
+        "title_exact": matched,
         "title_exact_ignoring_spaces": compact(actual.get("title"))
         == compact(expected["title"]),
+        "matched_via": matched_via,
         "title_similarity": round(
             similarity(actual.get("title"), expected["title"]), 3
         ),
@@ -212,6 +235,7 @@ def main() -> int:
         if present
         else 0.0,
         "network_attempts": sum(len(row["sources"]) for row in present),
+        "matched_via_alternate": sum(1 for row in present if row["matched_via"]),
         "unreported_attempts": sum(
             1
             for row in present
@@ -267,6 +291,8 @@ def main() -> int:
         )
         if row.get("error"):
             print(f"{'':{width}}    error: {row['error']}")
+        if row["matched_via"]:
+            print(f"{'':{width}}    title matched via alternate: {row['matched_via']}")
         if row["title_exact"] is False and row.get("actual_title"):
             print(f"{'':{width}}    got:  {row['actual_title']}")
             print(f"{'':{width}}    want: {row['expected_title']}")
@@ -286,6 +312,8 @@ def main() -> int:
         f"({totals['title_exact_ignoring_spaces']}/{totals['files']} ignoring "
         f"spaces, {totals['mean_title_similarity']} mean similarity), "
         f"first authors {totals['author_surname']}/{totals['files']}, "
+        f"titles matched via a documented alternate "
+        f"{totals['matched_via_alternate']}, "
         f"network attempts reported {totals['network_attempts']}"
     )
     print("verdict:", "PASS" if all(verdicts.values()) else "FAIL")

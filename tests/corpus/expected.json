@@ -1,0 +1,341 @@
+{
+  "corpus": {
+    "note": "local, copyrighted, never redistributed",
+    "path": "~/doc/paper"
+  },
+  "files": {
+    "2306.12983v2.pdf": {
+      "authors": [
+        "Jan Dubiński",
+        "Antoni Kowalczuk",
+        "Stanisław Pawlak",
+        "Przemysław Rokita",
+        "Tomasz Trzciński",
+        "Paweł Morawiecki"
+      ],
+      "arxiv_id": "2306.12983",
+      "doi": null,
+      "notes": "arXiv v2 is the version in the file and was the latest version at verification time (v1 2023-06-22, v2 2023-11-16; both are 2023, so the v1 year equals the recorded year). Same paper as Dubinski_Towards_More_Realistic_Membership_Inference_Attacks_on_Large_Diffusion_Models_WACV_2024_paper.pdf in this corpus, which is the published WACV 2024 version (DOI 10.1109/wacv57701.2024.00479). No journal DOI is recorded here because the file is the arXiv version; arXiv's own DataCite DOI is 10.48550/arXiv.2306.12983 (https://doi.org/10.48550/arXiv.2306.12983).",
+      "sources": {
+        "arxiv_id": "https://arxiv.org/abs/2306.12983",
+        "authors": "https://export.arxiv.org/api/query?id_list=2306.12983",
+        "doi": null,
+        "title": "https://arxiv.org/abs/2306.12983",
+        "venue": "https://arxiv.org/abs/2306.12983",
+        "year": "https://arxiv.org/abs/2306.12983"
+      },
+      "title": "Towards More Realistic Membership Inference Attacks on Large Diffusion Models",
+      "venue": "arXiv",
+      "year": 2023
+    },
+    "2310.16789v3.pdf": {
+      "authors": [
+        "Weijia Shi",
+        "Anirudh Ajith",
+        "Mengzhou Xia",
+        "Yangsibo Huang",
+        "Daogao Liu",
+        "Terra Blevins",
+        "Danqi Chen",
+        "Luke Zettlemoyer"
+      ],
+      "arxiv_id": "2310.16789",
+      "doi": null,
+      "notes": "arXiv v3 (2024-03-09) is the version in the file and was the latest version at verification time; v1 is 2023-10-25 and v2 is 2023-11-03, so the year recorded here is the year of v3 and the v1 year differs (2023). No journal DOI is recorded; arXiv's own DataCite DOI is 10.48550/arXiv.2310.16789.",
+      "sources": {
+        "arxiv_id": "https://arxiv.org/abs/2310.16789",
+        "authors": "https://export.arxiv.org/api/query?id_list=2310.16789",
+        "doi": null,
+        "title": "https://arxiv.org/abs/2310.16789",
+        "venue": "https://arxiv.org/abs/2310.16789",
+        "year": "https://arxiv.org/abs/2310.16789"
+      },
+      "title": "Detecting Pretraining Data from Large Language Models",
+      "venue": "arXiv",
+      "year": 2024
+    },
+    "2505.21469v4.pdf": {
+      "authors": [
+        "Cheng Zeng",
+        "Jirui Jin",
+        "Connor Ambrose",
+        "George Karypis",
+        "Mark Transtrum",
+        "Ellad B. Tadmor",
+        "Richard G. Hennig",
+        "Adrian Roitberg",
+        "Stefano Martiniani",
+        "Mingjie Liu"
+      ],
+      "arxiv_id": "2505.21469",
+      "doi": null,
+      "notes": "arXiv v4 (2025-12-13) is the version in the file and was the latest version at verification time; v1 2025-05-27, v2 2025-05-29 and v3 2025-07-07 are all from 2025 too, so the recorded year does not depend on the version. No journal DOI is recorded; arXiv's own DataCite DOI is 10.48550/arXiv.2505.21469.",
+      "sources": {
+        "arxiv_id": "https://arxiv.org/abs/2505.21469",
+        "authors": "https://export.arxiv.org/api/query?id_list=2505.21469",
+        "doi": null,
+        "title": "https://arxiv.org/abs/2505.21469",
+        "venue": "https://arxiv.org/abs/2505.21469",
+        "year": "https://arxiv.org/abs/2505.21469"
+      },
+      "title": "PropMolFlow: Property-Guided Molecule Generation with Geometry-Complete Flow Matching",
+      "venue": "arXiv",
+      "year": 2025
+    },
+    "2610.01939v2.pdf": {
+      "authors": [
+        "Ruiyang Si",
+        "Jianxin Bi",
+        "Shunyu Yang",
+        "Rui Ni",
+        "Wenbo Huang",
+        "Qiang Wang",
+        "Shulong Jiang",
+        "Yintianrun Zhang",
+        "Feixiang Ruan",
+        "Kewei Zhang",
+        "Duomin Wang",
+        "Xiuyu Li",
+        "Haiwen Feng",
+        "Zhen Dong",
+        "Daquan Zhou"
+      ],
+      "arxiv_id": "2610.01939",
+      "doi": null,
+      "notes": "arXiv v2 (2026-10-13) is the version in the file and was the latest version at verification time; v1 is 2026-10-01, so the v1 year equals the recorded year. No journal DOI is recorded; arXiv's own DataCite DOI is 10.48550/arXiv.2610.01939.",
+      "sources": {
+        "arxiv_id": "https://arxiv.org/abs/2610.01939",
+        "authors": "https://export.arxiv.org/api/query?id_list=2610.01939",
+        "doi": null,
+        "title": "https://arxiv.org/abs/2610.01939",
+        "venue": "https://arxiv.org/abs/2610.01939",
+        "year": "https://arxiv.org/abs/2610.01939"
+      },
+      "title": "Fewer Tokens, Better Action: GPT-6 Astra Robot Agents with 14% Higher Success Rate but 65% Fewer Tokens",
+      "venue": "arXiv",
+      "year": 2026
+    },
+    "Dubinski_Towards_More_Realistic_Membership_Inference_Attacks_on_Large_Diffusion_Models_WACV_2024_paper.pdf": {
+      "authors": [
+        "Jan Dubiński",
+        "Antoni Kowalczuk",
+        "Stanisław Pawlak",
+        "Przemyslaw Rokita",
+        "Tomasz Trzcinski",
+        "Paweł Morawiecki"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1109/wacv57701.2024.00479",
+      "notes": "Published WACV 2024 version. Same paper as 2306.12983v2.pdf in this corpus: one work, two deliberate files. Year and venue therefore differ from that file by design (this file: WACV 2024, 2024, published DOI; the arXiv file: arXiv, 2023, no DOI). The arXiv record of the same work is 2306.12983 (https://arxiv.org/abs/2306.12983); arxiv_id is null here because that is not the version in this file. Authorities disagree slightly on names and pagination: IEEE/Crossref print 'Przemyslaw Rokita' and 'Tomasz Trzcinski' (https://api.crossref.org/works/10.1109/wacv57701.2024.00479), CVF prints 'Trzciński, Tomasz' (https://openaccess.thecvf.com/content/WACV2024/html/Dubinski_Towards_More_Realistic_Membership_Inference_Attacks_on_Large_Diffusion_Models_WACV_2024_paper.html), arXiv prints 'Przemysław Rokita' and 'Tomasz Trzciński'; the page range is 4848-4857 in Crossref/IEEE but 4860-4869 in CVF open access.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://api.crossref.org/works/10.1109/wacv57701.2024.00479",
+        "doi": "https://api.crossref.org/works/10.1109/wacv57701.2024.00479",
+        "title": "https://openaccess.thecvf.com/content/WACV2024/html/Dubinski_Towards_More_Realistic_Membership_Inference_Attacks_on_Large_Diffusion_Models_WACV_2024_paper.html",
+        "venue": "https://api.crossref.org/works/10.1109/wacv57701.2024.00479",
+        "year": "https://api.crossref.org/works/10.1109/wacv57701.2024.00479"
+      },
+      "title": "Towards More Realistic Membership Inference Attacks on Large Diffusion Models",
+      "venue": "WACV 2024",
+      "year": 2024
+    },
+    "ICLR-2025-min-k-improved-baseline-for-pre-training-data-detection-from-large-language-models-Paper-Conference.pdf": {
+      "authors": [
+        "Jingyang Zhang",
+        "Jingwei Sun",
+        "Eric Yeats",
+        "Yang Ouyang",
+        "Martin Kuo",
+        "Jianyi Zhang",
+        "Hao Yang",
+        "Hai Li"
+      ],
+      "arxiv_id": null,
+      "doi": null,
+      "notes": "ICLR 2025 conference version; the file name matches the ICLR proceedings artefact (<hash>-Paper-Conference.pdf). The same work is on arXiv as 2404.02936 (https://arxiv.org/abs/2404.02936), whose v4 title uses 'Detecting' rather than 'Detection': 'Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large Language Models', while the ICLR record used here prints 'Pre-Training Data Detection from Large Language Models', which is what the file name also encodes. arxiv_id is null because the file is the ICLR version, not the arXiv version. No DOI: ICLR proceedings records in this repository carry none. The last author name varies between authorities: ICLR proceedings print 'Hao Yang' (https://proceedings.iclr.cc/paper_files/paper/2025/hash/a2e3b4132ab2e0b7a21e6e75da7f91a9-Abstract-Conference.html), OpenReview and arXiv v4 print 'Hao Frank Yang' (https://openreview.net/forum?id=ZGkfoufDaU).",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a2e3b4132ab2e0b7a21e6e75da7f91a9-Abstract-Conference.html",
+        "doi": null,
+        "title": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a2e3b4132ab2e0b7a21e6e75da7f91a9-Abstract-Conference.html",
+        "venue": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a2e3b4132ab2e0b7a21e6e75da7f91a9-Abstract-Conference.html",
+        "year": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a2e3b4132ab2e0b7a21e6e75da7f91a9-Abstract-Conference.html"
+      },
+      "title_alternates": {
+        "https://arxiv.org/abs/2404.02936": "Min-K%++: Improved Baseline for Detecting Pre-Training Data from Large Language Models"
+      },
+      "title": "Min-K%++: Improved Baseline for Pre-Training Data Detection from Large Language Models",
+      "venue": "ICLR 2025",
+      "year": 2025
+    },
+    "NIPS-2017-attention-is-all-you-need-Paper.pdf": {
+      "authors": [
+        "Ashish Vaswani",
+        "Noam Shazeer",
+        "Niki Parmar",
+        "Jakob Uszkoreit",
+        "Llion Jones",
+        "Aidan N. Gomez",
+        "Łukasz Kaiser",
+        "Illia Polosukhin"
+      ],
+      "arxiv_id": null,
+      "doi": null,
+      "notes": "NeurIPS 2017 proceedings record (proceedings volume 'Advances in Neural Information Processing Systems 30'; the 2017 conference was branded 'NIPS', which is how the file name spells it). The same work is on arXiv as 1706.03762 (https://arxiv.org/abs/1706.03762); arxiv_id is null because the file is the proceedings version, not the arXiv version. Title capitalisation differs between authorities: the proceedings record prints 'Attention is All you Need' (used here), arXiv prints 'Attention Is All You Need'. The eighth author is 'Łukasz Kaiser' in the proceedings record and 'Lukasz Kaiser' on arXiv. The 2017 proceedings record has no DOI.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+        "doi": null,
+        "title": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+        "venue": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+        "year": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html"
+      },
+      "title": "Attention is All you Need",
+      "venue": "NeurIPS 2017",
+      "year": 2017
+    },
+    "s41467-024-53632-4.pdf": {
+      "authors": [
+        "Kehan Wu",
+        "Yingce Xia",
+        "Pan Deng",
+        "Renhe Liu",
+        "Yuan Zhang",
+        "Han Guo",
+        "Yumeng Cui",
+        "Qizhi Pei",
+        "Lijun Wu",
+        "Shufang Xie",
+        "Si Chen",
+        "Xi Lu",
+        "Song Hu",
+        "Jinzhi Wu",
+        "Chi-Kin Chan",
+        "Shawn Chen",
+        "Liangliang Zhou",
+        "Nenghai Yu",
+        "Enhong Chen",
+        "Haiguang Liu",
+        "Jinjiang Guo",
+        "Tao Qin",
+        "Tie-Yan Liu"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1038/s41467-024-53632-4",
+      "notes": "Nature Communications, published online 2024-10-29 (volume 15, issue 1). Crossref and the publisher landing page agree on all recorded fields, including the order of all 23 authors. Whether an arXiv preprint of this work exists was not checked.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://www.nature.com/articles/s41467-024-53632-4",
+        "doi": "https://api.crossref.org/works/10.1038/s41467-024-53632-4",
+        "title": "https://www.nature.com/articles/s41467-024-53632-4",
+        "venue": "https://api.crossref.org/works/10.1038/s41467-024-53632-4",
+        "year": "https://api.crossref.org/works/10.1038/s41467-024-53632-4"
+      },
+      "title": "TamGen: drug design with target-aware molecule generation through a chemical language model",
+      "venue": "Nature Communications",
+      "year": 2024
+    },
+    "s41467-025-60763-9.pdf": {
+      "authors": [
+        "Hyunho Kim",
+        "Bongsung Bae",
+        "Minsu Park",
+        "Yewon Shin",
+        "Trey Ideker",
+        "Hojung Nam"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1038/s41467-025-60763-9",
+      "notes": "Nature Communications, published online 2025-07-01 (volume 16, issue 1). Crossref and the publisher landing page agree on all recorded fields, including the order of all 6 authors. Whether an arXiv preprint of this work exists was not checked.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://www.nature.com/articles/s41467-025-60763-9",
+        "doi": "https://api.crossref.org/works/10.1038/s41467-025-60763-9",
+        "title": "https://www.nature.com/articles/s41467-025-60763-9",
+        "venue": "https://api.crossref.org/works/10.1038/s41467-025-60763-9",
+        "year": "https://api.crossref.org/works/10.1038/s41467-025-60763-9"
+      },
+      "title": "A genotype-to-drug diffusion model for generation of tailored anti-cancer small molecules",
+      "venue": "Nature Communications",
+      "year": 2025
+    },
+    "s41467-026-75702-5.pdf": {
+      "authors": [
+        "Md Atik Ahamed",
+        "Qiang Ye",
+        "Qiang Cheng"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1038/s41467-026-75702-5",
+      "notes": "Nature Communications, published online 2026-07-29 (volume 17, issue 1). Crossref and the publisher landing page agree on all recorded fields, including the order of all 3 authors. Whether an arXiv preprint of this work exists was not checked.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://www.nature.com/articles/s41467-026-75702-5",
+        "doi": "https://api.crossref.org/works/10.1038/s41467-026-75702-5",
+        "title": "https://www.nature.com/articles/s41467-026-75702-5",
+        "venue": "https://api.crossref.org/works/10.1038/s41467-026-75702-5",
+        "year": "https://api.crossref.org/works/10.1038/s41467-026-75702-5"
+      },
+      "title": "Mol-CADiff: text-conditional molecule generation via causality-aware autoregressive diffusion",
+      "venue": "Nature Communications",
+      "year": 2026
+    },
+    "s43588-024-00737-x.pdf": {
+      "authors": [
+        "Arne Schneuing",
+        "Charles Harris",
+        "Yuanqi Du",
+        "Kieran Didi",
+        "Arian Jamasb",
+        "Ilia Igashov",
+        "Weitao Du",
+        "Carla Gomes",
+        "Tom L. Blundell",
+        "Pietro Lio",
+        "Max Welling",
+        "Michael Bronstein",
+        "Bruno Correia"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1038/s43588-024-00737-x",
+      "notes": "Nature Computational Science 4(12):899-909, published online 2024-12-09. Crossref and the publisher landing page agree on all recorded fields, including the order of all 13 authors (the landing page marks the first three as equal contributors). Whether an arXiv preprint of this work exists was not checked.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://www.nature.com/articles/s43588-024-00737-x",
+        "doi": "https://api.crossref.org/works/10.1038/s43588-024-00737-x",
+        "title": "https://www.nature.com/articles/s43588-024-00737-x",
+        "venue": "https://api.crossref.org/works/10.1038/s43588-024-00737-x",
+        "year": "https://api.crossref.org/works/10.1038/s43588-024-00737-x"
+      },
+      "title": "Structure-based drug design with equivariant diffusion models",
+      "venue": "Nature Computational Science",
+      "year": 2024
+    },
+    "s43588-026-00986-y.pdf": {
+      "authors": [
+        "Joseph M. Cavanagh",
+        "Kunyang Sun",
+        "Andrew Gritsevskiy",
+        "Dorian Bagni",
+        "Yingze Wang",
+        "Thomas D. Bannister",
+        "Teresa Head-Gordon"
+      ],
+      "arxiv_id": null,
+      "doi": "10.1038/s43588-026-00986-y",
+      "notes": "Nature Computational Science 6(8):856-869, published online 2026-05-11. Crossref and the publisher landing page agree on all recorded fields, including the order of all 7 authors. Whether an arXiv preprint of this work exists was not checked.",
+      "sources": {
+        "arxiv_id": null,
+        "authors": "https://www.nature.com/articles/s43588-026-00986-y",
+        "doi": "https://api.crossref.org/works/10.1038/s43588-026-00986-y",
+        "title": "https://www.nature.com/articles/s43588-026-00986-y",
+        "venue": "https://api.crossref.org/works/10.1038/s43588-026-00986-y",
+        "year": "https://api.crossref.org/works/10.1038/s43588-026-00986-y"
+      },
+      "title": "SmileyLlama: modifying large language models for directed chemical space exploration",
+      "venue": "Nature Computational Science",
+      "year": 2026
+    }
+  },
+  "verified_at": "2026-10-15"
+}
