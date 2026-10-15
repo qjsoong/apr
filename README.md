@@ -221,6 +221,7 @@ With a local corpus of your own PDFs (`APR_CORPUS=~/doc/paper`):
 uv run pytest                                    # now includes the corpus tests
 uv run python scripts/eval_corpus.py             # offline scoreboard
 uv run python scripts/eval_corpus.py --online     # online scoreboard
+APR_TEST_ALLOW_NETWORK=1 uv run python scripts/live_smoke.py   # live lookups, no corpus
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the checks CI runs and the rules the

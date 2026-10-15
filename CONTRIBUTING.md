@@ -20,6 +20,14 @@ uv run pytest                  # tests, on 3.10 / 3.11 / 3.12 / 3.13
 uv build                       # sdist + wheel, installed and run in CI
 ```
 
+Two checks deliberately do not run in CI, because one needs a corpus of
+copyrighted PDFs and the other needs the network:
+
+```console
+APR_CORPUS=~/doc/paper uv run pytest                  # corpus tests + corpus scoreboard
+APR_TEST_ALLOW_NETWORK=1 uv run python scripts/live_smoke.py   # live lookups of known papers
+```
+
 Run the same commands before opening a pull request. Formatting is not
 negotiated: `uv run ruff format .` is the answer.
 
