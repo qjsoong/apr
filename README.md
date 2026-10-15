@@ -12,8 +12,8 @@ Fewer Tokens, Better Action: GPT-6 Astra Robot Agents with 14% Higher Success Ra
 It does one thing. It does not manage a library, rename your files, download
 anything or keep a database.
 
-> **Status:** v0.1.0. Install from Git with the command below; there is no PyPI
-> package.
+> **Status:** v0.1.0 is released. The [release](https://github.com/qjsoong/apr/releases/tag/v0.1.0)
+> carries a wheel and an sdist; there is no PyPI package.
 
 ## Install
 
@@ -25,6 +25,15 @@ uvx --from git+https://github.com/qjsoong/apr apr --help
 uv tool install git+https://github.com/qjsoong/apr
 # or
 pip install "git+https://github.com/qjsoong/apr"
+```
+
+Prefer a built artifact? Download `apr-0.1.0-py3-none-any.whl` from the release
+page and install that file:
+
+```console
+uv tool install ./apr-0.1.0-py3-none-any.whl
+# or
+pip install ./apr-0.1.0-py3-none-any.whl
 ```
 
 Requires Python 3.10 or newer. One runtime dependency (`pypdf`); no compiler, no
