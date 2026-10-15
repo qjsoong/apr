@@ -1,0 +1,82 @@
+{
+ "status": "ok",
+ "message": {
+  "DOI": "10.1103/physrevd.104.095029",
+  "type": "journal-article",
+  "title": [
+   "Dark photon limits: A handbook"
+  ],
+  "container-title": [
+   "Physical Review D"
+  ],
+  "publisher": "American Physical Society (APS)",
+  "issued": {
+   "date-parts": [
+    [
+     2021,
+     11,
+     29
+    ]
+   ]
+  },
+  "author": [
+   {
+    "ORCID": "https://orcid.org/0000-0003-1122-6606",
+    "authenticated-orcid": true,
+    "given": "Andrea",
+    "family": "Caputo",
+    "sequence": "first",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0003-3526-0526",
+    "authenticated-orcid": true,
+    "given": "Alexander J.",
+    "family": "Millar",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0003-3803-9384",
+    "authenticated-orcid": true,
+    "given": "Ciaran A. J.",
+    "family": "O’Hare",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0001-7847-1281",
+    "authenticated-orcid": true,
+    "given": "Edoardo",
+    "family": "Vitagliano",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   }
+  ],
+  "URL": "https://doi.org/10.1103/physrevd.104.095029"
+ }
+}

@@ -1,0 +1,433 @@
+{
+ "status": "ok",
+ "message": {
+  "items": [
+   {
+    "DOI": "10.1109/wacv57701.2024.00479",
+    "type": "proceedings-article",
+    "title": [
+     "Towards More Realistic Membership Inference Attacks on Large Diffusion Models"
+    ],
+    "container-title": [
+     "2024 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024,
+       1,
+       3
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Jan",
+      "family": "Dubiński",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Antoni",
+      "family": "Kowalczuk",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Stanisław",
+      "family": "Pawlak",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Przemyslaw",
+      "family": "Rokita",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Tomasz",
+      "family": "Trzcinski",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Paweł",
+      "family": "Morawiecki",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Polish Academy of Sciences"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "IEEE"
+   },
+   {
+    "DOI": "10.1109/cvpr52734.2025.01740",
+    "type": "proceedings-article",
+    "title": [
+     "CDI: Copyrighted Data Identification in Diffusion Models"
+    ],
+    "container-title": [
+     "2025 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2025,
+       6,
+       10
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Jan",
+      "family": "Dubiński",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Warsaw University of Technology, IDEAS NCBR"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Antoni",
+      "family": "Kowalczuk",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "CISPA Helmholtz Center for Information Security"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Franziska",
+      "family": "Boenisch",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "CISPA Helmholtz Center for Information Security"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Adam",
+      "family": "Dziedzic",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "CISPA Helmholtz Center for Information Security"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "IEEE"
+   },
+   {
+    "DOI": "10.3233/faia240646",
+    "type": "book-chapter",
+    "title": [
+     "Efficient Model-Stealing Attacks Against Inductive Graph Neural Networks"
+    ],
+    "container-title": [
+     "Frontiers in Artificial Intelligence and Applications",
+     "ECAI 2024"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024,
+       10,
+       16
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Marcin",
+      "family": "Podhajski",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "IDEAS NCBR, 00-801 Warsaw, Poland"
+       },
+       {
+        "name": "Institute of Fundamental Technological Research, Polish Academy of Sciences, Pawińskiego 5B, 02-106 Warsaw, Poland"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Jan",
+      "family": "Dubiński",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "IDEAS NCBR, 00-801 Warsaw, Poland"
+       },
+       {
+        "name": "Warsaw University of Technology, Faculty of Electronics and Information Technology, 00-661 Warsaw, Poland"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Franziska",
+      "family": "Boenisch",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "CISPA, 66123 Saarbrücken, Germany"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Adam",
+      "family": "Dziedzic",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "CISPA, 66123 Saarbrücken, Germany"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Agnieszka",
+      "family": "Pregowska",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Institute of Fundamental Technological Research, Polish Academy of Sciences, Pawińskiego 5B, 02-106 Warsaw, Poland"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Tomasz P.",
+      "family": "Michalak",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "IDEAS NCBR, 00-801 Warsaw, Poland"
+       },
+       {
+        "name": "University of Warsaw, Faculty of Mathematics, Informatics and Mechanics, 00-927 Warsaw, Poland"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "publisher": "IOS Press"
+   },
+   {
+    "DOI": "10.1609/aaai.v40i29.39671",
+    "type": "journal-article",
+    "title": [
+     "On Stealing Graph Neural Network Models"
+    ],
+    "container-title": [
+     "Proceedings of the AAAI Conference on Artificial Intelligence"
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026,
+       3,
+       14
+      ]
+     ]
+    },
+    "author": [
+     {
+      "given": "Marcin",
+      "family": "Podhajski",
+      "sequence": "first",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Jan",
+      "family": "Dubiński",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Franziska",
+      "family": "Boenisch",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Adam",
+      "family": "Dziedzic",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Agnieszka",
+      "family": "Pręgowska",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Tomasz Paweł",
+      "family": "Michalak",
+      "sequence": "additional",
+      "affiliation": [],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "publisher": "Association for the Advancement of Artificial Intelligence (AAAI)"
+   }
+  ]
+ }
+}

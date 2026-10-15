@@ -1,0 +1,323 @@
+{
+ "status": "ok",
+ "message": {
+  "DOI": "10.1038/s41467-024-53632-4",
+  "type": "journal-article",
+  "title": [
+   "TamGen: drug design with target-aware molecule generation through a chemical language model"
+  ],
+  "container-title": [
+   "Nature Communications"
+  ],
+  "publisher": "Springer Science and Business Media LLC",
+  "issued": {
+   "date-parts": [
+    [
+     2024,
+     10,
+     29
+    ]
+   ]
+  },
+  "published-online": {
+   "date-parts": [
+    [
+     2024,
+     10,
+     29
+    ]
+   ]
+  },
+  "author": [
+   {
+    "given": "Kehan",
+    "family": "Wu",
+    "sequence": "first",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0001-9823-9033",
+    "authenticated-orcid": false,
+    "given": "Yingce",
+    "family": "Xia",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0009-0008-7948-4939",
+    "authenticated-orcid": false,
+    "given": "Pan",
+    "family": "Deng",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Renhe",
+    "family": "Liu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Yuan",
+    "family": "Zhang",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Han",
+    "family": "Guo",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Yumeng",
+    "family": "Cui",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Qizhi",
+    "family": "Pei",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Lijun",
+    "family": "Wu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Shufang",
+    "family": "Xie",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Si",
+    "family": "Chen",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Xi",
+    "family": "Lu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Song",
+    "family": "Hu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Jinzhi",
+    "family": "Wu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Chi-Kin",
+    "family": "Chan",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Shawn",
+    "family": "Chen",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Liangliang",
+    "family": "Zhou",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Nenghai",
+    "family": "Yu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Enhong",
+    "family": "Chen",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "given": "Haiguang",
+    "family": "Liu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0002-9157-2199",
+    "authenticated-orcid": false,
+    "given": "Jinjiang",
+    "family": "Guo",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0002-9095-0776",
+    "authenticated-orcid": false,
+    "given": "Tao",
+    "family": "Qin",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   },
+   {
+    "ORCID": "https://orcid.org/0000-0002-0476-8020",
+    "authenticated-orcid": false,
+    "given": "Tie-Yan",
+    "family": "Liu",
+    "sequence": "additional",
+    "affiliation": [],
+    "role": [
+     {
+      "vocabulary": "crossref",
+      "role": "author"
+     }
+    ]
+   }
+  ],
+  "URL": "https://doi.org/10.1038/s41467-024-53632-4",
+  "subject": [],
+  "abstract": "<jats:p>\n                    Generative drug design facilitates the creation of compounds effective against pathogenic target proteins. This opens up the potential to discover novel compounds within the vast chemical space and fosters the development of innovative therapeutic strategies. However, the practicality of generated molecules is often limited, as many designs focus on a narrow set of drug-related properties, failing to improve the success rate of subsequent drug discovery process. To overcome these challenges, we develop TamGen, a method that employs a GPT-like chemical language model and enables target-aware molecule generation and compound refinement. We demonstrate that the compounds generated by TamGen have improved molecular quality and viability. Additionally, we have integrated TamGen into a drug discovery pipeline and identified 14 compounds showing compelling inhibitory activity against the Tuberculosis ClpP protease, with the most effective compound exhibiting a half maximal inhibitory concentration (IC\n                    <jats:sub>50</jats:sub>\n                    ) of 1.9 μM. Our findings underscore the practical potential and real-world applicability of generative drug design approaches, paving the way for future advancements in the field.\n                  </jats:p>"
+ }
+}

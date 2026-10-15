@@ -1,0 +1,105 @@
+{
+ "meta": {
+  "count": 3217266
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W2626778328",
+   "doi": "https://doi.org/10.65215/2q58a426",
+   "title": "Attention Is All You Need",
+   "publication_year": 2025,
+   "type": "preprint",
+   "primary_location": {
+    "landing_page_url": "https://doi.org/10.65215/2q58a426",
+    "source": null
+   },
+   "authorships": [
+    {
+     "author": {
+      "display_name": "Ashish Vaswani"
+     }
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/W3163652268",
+   "doi": "https://doi.org/10.1109/icassp39728.2021.9413901",
+   "title": "Attention Is All You Need In Speech Separation",
+   "publication_year": 2021,
+   "type": "conference-paper",
+   "primary_location": {
+    "landing_page_url": "https://doi.org/10.1109/icassp39728.2021.9413901",
+    "source": {
+     "display_name": "IEEE International Conference on Acoustics Speech and Signal Processing"
+    }
+   },
+   "authorships": [
+    {
+     "author": {
+      "display_name": "Cem Subakan"
+     }
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/W2997150500",
+   "doi": "https://doi.org/10.1609/aaai.v34i07.6693",
+   "title": "Channel Attention Is All You Need for Video Frame Interpolation",
+   "publication_year": 2020,
+   "type": "conference-paper",
+   "primary_location": {
+    "landing_page_url": "https://doi.org/10.1609/aaai.v34i07.6693",
+    "source": {
+     "display_name": "Proceedings of the AAAI Conference on Artificial Intelligence"
+    }
+   },
+   "authorships": [
+    {
+     "author": {
+      "display_name": "Myungsub Choi"
+     }
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/W4390678101",
+   "doi": "https://doi.org/10.1093/bib/bbad467",
+   "title": "Attention is all you need: utilizing attention in AI-enabled drug discovery",
+   "publication_year": 2023,
+   "type": "article",
+   "primary_location": {
+    "landing_page_url": "https://doi.org/10.1093/bib/bbad467",
+    "source": {
+     "display_name": "Briefings in Bioinformatics"
+    }
+   },
+   "authorships": [
+    {
+     "author": {
+      "display_name": "Yang Zhang"
+     }
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/W7124707810",
+   "doi": "https://doi.org/10.5281/zenodo.18289746",
+   "title": "Attention is all you need",
+   "publication_year": 2026,
+   "type": "other",
+   "primary_location": {
+    "landing_page_url": "https://doi.org/10.5281/zenodo.18289747",
+    "source": {
+     "display_name": "Zenodo (CERN European Organization for Nuclear Research)"
+    }
+   },
+   "authorships": [
+    {
+     "author": {
+      "display_name": "Beat Döbeli Honegger"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+ "data": [
+  {
+   "paperId": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+   "title": "Attention is All you Need",
+   "year": 2017,
+   "venue": "Neural Information Processing Systems",
+   "publicationVenue": {
+    "name": "Neural Information Processing Systems"
+   },
+   "externalIds": {
+    "MAG": "2626778328",
+    "DBLP": "journals/corr/VaswaniSPUJGKP17",
+    "ArXiv": "1706.03762",
+    "CorpusId": 13756489
+   },
+   "authors": [
+    {
+     "authorId": "40348417",
+     "name": "Ashish Vaswani"
+    },
+    {
+     "authorId": "1846258",
+     "name": "Noam Shazeer"
+    },
+    {
+     "authorId": "3877127",
+     "name": "N. Parmar"
+    },
+    {
+     "authorId": "39328010",
+     "name": "J. Uszkoreit"
+    }
+   ],
+   "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on ..."
+  }
+ ]
+}

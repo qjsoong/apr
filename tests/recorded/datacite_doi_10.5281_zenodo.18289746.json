@@ -1,0 +1,47 @@
+{
+ "data": {
+  "id": "10.5281/zenodo.18289746",
+  "attributes": {
+   "doi": "10.5281/zenodo.18289746",
+   "url": "https://zenodo.org/doi/10.5281/zenodo.18289746",
+   "publisher": "Bote der Urschweiz",
+   "publicationYear": 2026,
+   "titles": [
+    {
+     "title": "Attention is all you need"
+    }
+   ],
+   "types": {
+    "ris": "RPRT",
+    "bibtex": "article",
+    "citeproc": "article-journal",
+    "schemaOrg": "ScholarlyArticle",
+    "resourceType": "",
+    "resourceTypeGeneral": "Text"
+   },
+   "creators": [
+    {
+     "name": "Döbeli Honegger, Beat",
+     "nameType": "Personal",
+     "givenName": "Beat",
+     "familyName": "Döbeli Honegger",
+     "affiliation": [
+      "Schwyz University of Teacher Education"
+     ],
+     "nameIdentifiers": [
+      {
+       "nameIdentifier": "0000-0002-0199-9712",
+       "nameIdentifierScheme": "ORCID"
+      }
+     ]
+    }
+   ],
+   "descriptions": [
+    {
+     "descriptionType": "Abstract",
+     "description": "«Attention is all you need» («Aufmerksamkeit ist alles, was man braucht») lautet der Titel eines  wissenschaftlichen Artikels, der zu den meistzitierten gehört, obwohl er noch keine zehn Jahre alt ist. Er beschreibt, wie Machine-Learning-Systeme wie ChatGPT in einem Text wichtige von unwichtigen ..."
+    }
+   ]
+  }
+ }
+}
