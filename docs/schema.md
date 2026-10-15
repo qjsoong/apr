@@ -64,6 +64,15 @@ instead, so that a pretty-printed stream stays valid JSON.
 
 ## Values and meaning
 
+- `doi`, `arxiv_id` and `arxiv_version` describe the **paper**, not necessarily
+  the file. Read from the file, `method` starts with `info:`, `xmp:`, `text:` or
+  `name:`; filled by an online match, it names the matched record instead
+  (`arxiv: id_list=…`, `crossref: query.bibliographic=…`). So a proceedings PDF
+  can carry the arXiv identifier of the same paper, and a preprint PDF can carry
+  the published DOI. `provenance` is what tells the two apart, and a caller that
+  needs the file's own identifier should check the method or read the local
+  method only (no network: `apr FILE`).
+
 - `confidence` is a weighted mean over `title` (0.45), `authors` (0.35), `year`
   (0.10), `doi` (0.05), `arxiv_id` (0.05), renormalised over the fields that are
   actually present. A record with a perfect title and nothing else scores 1.0,
