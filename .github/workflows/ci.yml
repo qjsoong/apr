@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: lint and types
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --group dev
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run ty check
+
+  test:
+    name: tests (${{ matrix.python }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - run: uv run --python ${{ matrix.python }} --group dev --locked pytest
+
+  package:
+    name: build and install
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - run: uv build
+      # The documented install path is "install from Git", so prove a built
+      # artifact installs and runs on its own, without the checkout.
+      - name: wheel installs and runs
+        run: |
+          set -euo pipefail
+          cd "$(mktemp -d)"
+          uv run --no-project --with "$GITHUB_WORKSPACE"/dist/*.whl apr --version
+      - name: sdist builds and runs
+        run: |
+          set -euo pipefail
+          cd "$(mktemp -d)"
+          uv run --no-project --with "$GITHUB_WORKSPACE"/dist/*.tar.gz apr --version

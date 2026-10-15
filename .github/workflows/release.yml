@@ -1,0 +1,41 @@
+name: Release
+
+# Tag format: vMAJOR.MINOR.PATCH (a plain annotated tag on main).
+# Pushing such a tag builds the sdist and wheel, checks that the built artifact
+# runs, verifies the tag matches the packaged version, and attaches both files
+# to a GitHub release. No registry publication: apr is installed from Git or
+# from the release assets.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - name: Build sdist and wheel
+        run: uv build
+      - name: Check the built wheel runs
+        run: |
+          set -euo pipefail
+          cd "$(mktemp -d)"
+          version=$(uv run --no-project --with "$GITHUB_WORKSPACE"/dist/*.whl apr --version)
+          echo "$version"
+          test "$version" = "apr ${GITHUB_REF_NAME#v}"
+      - name: Attach artifacts to a GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/*.whl dist/*.tar.gz \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes
