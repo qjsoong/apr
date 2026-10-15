@@ -12,8 +12,8 @@ Fewer Tokens, Better Action: GPT-6 Astra Robot Agents with 14% Higher Success Ra
 It does one thing. It does not manage a library, rename your files, download
 anything or keep a database.
 
-> **Status:** v0.1.0, released from this repository. Not on PyPI — install from
-> Git with the command below.
+> **Status:** v0.1.0. Install from Git with the command below; there is no PyPI
+> package.
 
 ## Install
 
@@ -81,6 +81,31 @@ Every field, every enum and the exit codes are specified in
 Options that matter: `--online` (opt-in network use), `--why` (show every value
 considered and whether it won), `--no-abstract`, `--pretty`, `--mailto`,
 `--timeout`, `--no-cache`, `-v`.
+
+## Recipe: rename a folder by title and author
+
+The point of the JSON is that something else consumes it. Offline, on a folder of
+messy file names:
+
+```sh
+for f in *.pdf; do
+  meta=$(apr --no-abstract "$f") || continue
+  title=$(printf '%s' "$meta" | jq -r '.title // empty' | tr -d '/:*?"<>|' | cut -c1-90)
+  author=$(printf '%s' "$meta" | jq -r '.authors[0] // empty' | awk '{print $NF}')
+  year=$(printf '%s' "$meta" | jq -r '.year // empty')
+  [ -n "$title" ] && mv -n -- "$f" "$author $year - $title.pdf"
+done
+```
+
+```text
+2610.01939v2.pdf                          -> Si 2026 - Fewer Tokens, Better Action ....pdf
+NIPS-2017-attention-is-all-you-need-Paper.pdf -> Vaswani 2017 - Attention Is All You Need.pdf
+s41467-026-75702-5.pdf                    -> Ahamed 2026 - Mol-CADiff text-conditional ....pdf
+```
+
+Check `status` and `provenance` if you would rather not rename on a guess, and
+truncate as crudely as your filesystem demands: apr identifies papers, it does
+not decide what a good file name is.
 
 ## Offline by default
 
