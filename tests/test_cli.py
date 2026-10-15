@@ -194,6 +194,37 @@ def test_closed_pipe_exits_141(
     assert cli.main(["a.pdf"]) == cli.EXIT_BROKEN_PIPE
 
 
+def test_online_uses_the_documented_default_cache_dir(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The help text promises $XDG_CACHE_HOME/apr; honour it, and -no-cache off."""
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "cachehome"))
+    seen: list[object] = []
+
+    def fake_identify(path: str | Path, **kwargs: object) -> PaperRecord:
+        seen.append(kwargs.get("cache_dir"))
+        return make_record(str(path))
+
+    monkeypatch.setattr(cli, "identify", fake_identify)
+    cli.main(["--online", "a.pdf"])
+    cli.main(["--online", "--no-cache", "a.pdf"])
+    cli.main(["--online", "--cache-dir", str(tmp_path / "elsewhere"), "a.pdf"])
+    capsys.readouterr()
+    assert seen == [
+        tmp_path / "cachehome" / "apr",
+        None,
+        tmp_path / "elsewhere",
+    ]
+
+
+def test_offline_never_touches_the_cache(
+    stub_identify: list[tuple[str, bool]], capsys: pytest.CaptureFixture[str]
+) -> None:
+    cli.main(["a.pdf"])
+    capsys.readouterr()
+    assert stub_identify == [("a.pdf", False)]
+
+
 def test_python_dash_m_runs_the_cli() -> None:
     """`python -m apr` is the documented way to run an uninstalled checkout."""
     proc = subprocess.run(

@@ -147,6 +147,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     return EXIT_OK
 
 
+def default_cache_dir() -> Path:
+    """Where online responses are cached, per the documented default.
+
+    XDG first, so a caller can redirect it; nothing is written to the input
+    directory or to the checkout. ``--no-cache`` disables caching entirely.
+    """
+    base = os.environ.get("XDG_CACHE_HOME")
+    return (Path(base) if base else Path.home() / ".cache") / "apr"
+
+
 def _identify_one(spec: str, args: argparse.Namespace) -> PaperRecord:
     if spec == "-":
         return _identify_stdin(args)
@@ -155,7 +165,7 @@ def _identify_one(spec: str, args: argparse.Namespace) -> PaperRecord:
         online=args.online,
         mailto=args.mailto,
         timeout=args.timeout,
-        cache_dir=None if args.no_cache else args.cache_dir,
+        cache_dir=None if args.no_cache else (args.cache_dir or default_cache_dir()),
         want_abstract=not args.no_abstract,
         verbose=args.verbose,
     )
