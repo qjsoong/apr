@@ -1,8 +1,11 @@
 # Evaluation
 
 What `apr` scores on twelve real papers, how that was measured, and what the
-numbers do not prove. Measured at revision `2f7f01a` (2026-10-15, UTC) on Linux
-(Python 3.13, `pypdf` as installed by `uv sync`).
+numbers do not prove. Measured at revision `47606ce` (2026-10-15, UTC) on Linux
+(Python 3.13, `pypdf` as installed by `uv sync`). That revision is the last one
+that changes anything under `src/`, `scripts/` or `tests/` before the release;
+the commits after it are documentation, and
+`git diff --stat 47606ce..HEAD -- src scripts tests` is empty.
 
 ```console
 export APR_CORPUS=~/doc/paper
