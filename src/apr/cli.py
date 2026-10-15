@@ -25,6 +25,7 @@ EXIT_OK = 0
 EXIT_UNIDENTIFIED = 1
 EXIT_ERROR = 2
 EXIT_INTERRUPTED = 130
+EXIT_BROKEN_PIPE = 141
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -117,11 +118,28 @@ def main(argv: Sequence[str] | None = None) -> int:
             except InputError as exc:
                 print(f"apr: {exc}", file=sys.stderr)
                 had_error = True
+            except Exception as exc:
+                # A malformed PDF is the caller's problem, not a traceback.
+                print(
+                    f"apr: {spec}: internal error: {type(exc).__name__}: {exc}",
+                    file=sys.stderr,
+                )
+                if args.verbose:
+                    import traceback
+
+                    traceback.print_exc()
+                had_error = True
     except KeyboardInterrupt:
         return EXIT_INTERRUPTED
 
     if records:
-        sys.stdout.write(_serialise(records, args) + "\n")
+        try:
+            sys.stdout.write(_serialise(records, args) + "\n")
+            sys.stdout.flush()
+        except BrokenPipeError:
+            # `apr f.pdf | head -1` closes the pipe; leave quietly like other tools.
+            os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+            return EXIT_BROKEN_PIPE
     if had_error:
         return EXIT_ERROR
     if any(record.status == STATUS_UNIDENTIFIED for record in records):

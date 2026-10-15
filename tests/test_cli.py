@@ -151,6 +151,47 @@ def test_no_abstract_and_why_flags(
     assert payload["evidence"]
 
 
+def test_unexpected_failure_is_reported_without_a_traceback(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def boom(path: str | Path, **kwargs: object) -> PaperRecord:
+        raise ValueError("corrupt xref table")
+
+    monkeypatch.setattr(cli, "identify", boom)
+    assert cli.main(["a.pdf"]) == cli.EXIT_ERROR
+    captured = capsys.readouterr()
+    assert "apr: a.pdf: internal error: ValueError: corrupt xref table" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_unexpected_failure_shows_a_traceback_when_verbose(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def boom(path: str | Path, **kwargs: object) -> PaperRecord:
+        raise ValueError("corrupt xref table")
+
+    monkeypatch.setattr(cli, "identify", boom)
+    assert cli.main(["-v", "a.pdf"]) == cli.EXIT_ERROR
+    assert "Traceback" in capsys.readouterr().err
+
+
+def test_closed_pipe_exits_141(
+    stub_identify: list[tuple[str, bool]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class BrokenStdout:
+        def write(self, _text: str) -> int:
+            raise BrokenPipeError
+
+        def flush(self) -> None:
+            raise BrokenPipeError
+
+        def fileno(self) -> int:
+            return 1
+
+    monkeypatch.setattr(cli.sys, "stdout", BrokenStdout())
+    assert cli.main(["a.pdf"]) == cli.EXIT_BROKEN_PIPE
+
+
 def test_stdin_is_spooled_and_cleaned_up(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
