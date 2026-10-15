@@ -94,6 +94,8 @@ def test_clean_metadata_fixture() -> None:
     assert record.venue == "Journal of Clean Tests"
     assert record.abstract is not None
     assert record.abstract.startswith("This fixture carries a complete /Info")
+    assert record.abstract.endswith("extraction can cross-check the two sources.")
+    assert "Body text follows the abstract heading." not in record.abstract
     assert record.status == "identified"
     assert record.warnings == []
     assert record.provenance["doi"].source == "pdf-info"

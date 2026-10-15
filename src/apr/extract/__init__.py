@@ -104,5 +104,5 @@ def _warn_about_author_lists(
         return
     record.warn(
         f"/Info lists {len(info_authors)} author(s) and XMP lists "
-        f"{len(xmp_authors)}; kept the longer list"
+        f"{len(xmp_authors)}; XMP is preferred"
     )

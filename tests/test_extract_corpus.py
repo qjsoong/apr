@@ -56,8 +56,12 @@ def test_arxiv_genpdf_truncated_metadata(corpus_dir: Path) -> None:
     assert record.venue == "arXiv"
     assert record.doi == "10.48550/arxiv.2610.01939"
     assert any("truncated" in warning for warning in record.warnings)
+    # The abstract block ends where the printed "1 Introduction" heading does,
+    # so the introduction's first sentence must not be part of it.
     assert record.abstract is not None
     assert record.abstract.startswith("Vision-language model (VLM) agents")
+    assert "surpassing the Qwen3.5-27B base model." in record.abstract
+    assert "Code as Policies and ProgPrompt" not in record.abstract
 
 
 def test_arxiv_genpdf_complete_metadata(corpus_dir: Path) -> None:
@@ -83,6 +87,8 @@ def test_arxiv_genpdf_complete_metadata(corpus_dir: Path) -> None:
     assert record.arxiv_id == "2505.21469"
     assert record.year == 2025
     assert record.provenance["title"].source == "pdf-info"
+    assert record.abstract is not None
+    assert record.abstract.endswith("out-of-distribution generalization.")
 
 
 def test_arxiv_pdf_without_embedded_metadata(corpus_dir: Path) -> None:
@@ -103,6 +109,7 @@ def test_arxiv_pdf_without_embedded_metadata(corpus_dir: Path) -> None:
     assert record.year == 2023
     assert record.abstract is not None
     assert record.abstract.startswith("Generative diffusion models")
+    assert record.abstract.endswith("will persist in the foreseeable future.")
 
 
 def test_conference_pdf_with_caps_title(corpus_dir: Path) -> None:
@@ -115,6 +122,7 @@ def test_conference_pdf_with_caps_title(corpus_dir: Path) -> None:
     assert record.venue == "ICLR 2024"
     assert record.year == 2024
     assert record.abstract is not None
+    assert record.abstract.endswith("consistently effective solution.")
 
 
 def test_conference_pdf_with_hyphenated_caps_title(corpus_dir: Path) -> None:
@@ -134,6 +142,8 @@ def test_conference_pdf_with_hyphenated_caps_title(corpus_dir: Path) -> None:
     assert record.authors[-1] == "Hai Li"
     assert record.venue == "ICLR 2025"
     assert record.year == 2025
+    assert record.abstract is not None
+    assert record.abstract.endswith("requires an extra reference model.")
 
 
 def test_nips_pdf_with_rich_info_dictionary(corpus_dir: Path) -> None:
@@ -149,6 +159,7 @@ def test_nips_pdf_with_rich_info_dictionary(corpus_dir: Path) -> None:
     assert record.year == 2017
     assert record.abstract is not None
     assert record.abstract.startswith("The dominant sequence transduction models")
+    assert record.abstract.endswith("best models from the literature.")
 
 
 def test_nature_article_with_partial_info_authors(corpus_dir: Path) -> None:
@@ -165,6 +176,8 @@ def test_nature_article_with_partial_info_authors(corpus_dir: Path) -> None:
     assert len(record.authors) == 23
     assert record.authors[-1] == "Tie-Yan Liu"
     assert any("XMP" in warning for warning in record.warnings)
+    # This style has no abstract marker on page 1, so no abstract is claimed.
+    assert record.abstract is None
 
 
 def test_nature_articles_carry_their_doi_in_the_page_header(corpus_dir: Path) -> None:
